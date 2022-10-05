@@ -95,6 +95,7 @@ public class SlicedBreadTeleOp extends LinearOpMode {
                         driverOp.getRightX(),
                         false
                 );
+
             } else {
 
                 // Below is a model for how field centric will drive when given the inputs
@@ -120,6 +121,7 @@ public class SlicedBreadTeleOp extends LinearOpMode {
                         imu.getRotation2d().getDegrees()-180,   // gyro value passed in here must be in degrees
                         false
                 );
+
             }
 
         }
