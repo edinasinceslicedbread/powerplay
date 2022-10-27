@@ -86,3 +86,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 *.hprof
+.java_pid59711.hprof.icloud
+*.icloud
