@@ -16,23 +16,22 @@ public class SlicedBreadTeleOp extends LinearOpMode {
     // uses field-centric or robot-centric driving styles. The
     // differences between them can be read here in the docs:
     // https://docs.ftclib.org/ftclib/features/drivebases#control-scheme
-    static final boolean FIELD_CENTRIC = true;
+    static final boolean FIELD_CENTRIC = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // constructor takes in frontLeft, frontRight, backLeft, backRight motors
         // IN THAT ORDER
         MecanumDrive drive = new MecanumDrive(
-                new Motor(hardwareMap, "frontLeft"),
-                new Motor(hardwareMap, "frontRight"),
-                new Motor(hardwareMap, "backLeft"),
-                new Motor(hardwareMap, "backRight")
+                new Motor(hardwareMap, "leftFront"),
+                new Motor(hardwareMap, "rightFront"),
+                new Motor(hardwareMap, "leftRear"),
+                new Motor(hardwareMap, "rightRear")
         );
         //drive.setMaxSpeed();
         //default=8.82
         //0=wont move
-
-//1=8.11
+        //1=8.11
         //2=7.24
         //3=7.39
 
