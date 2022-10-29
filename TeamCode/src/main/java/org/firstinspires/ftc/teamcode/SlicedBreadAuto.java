@@ -17,16 +17,16 @@ public class SlicedBreadAuto extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
 
         drive.setPoseEstimate(startPose);
-
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(180))
-                .forward(24)
-                .turn(Math.toRadians(-90))
-                .forward(24)
-                .build();
+        TrajectorySequence trajSeq =
+                drive.trajectorySequenceBuilder(new Pose2d(36, -64.5, Math.toRadians(90)))
+                        .lineTo(new Vector2d(36,-36))
+                        .strafeTo(new Vector2d(12,-36))
+                        .lineTo(new Vector2d(12,-12))
+                        .strafeTo(new Vector2d(36,-12))
+                        .lineTo(new Vector2d(36,12))
+                        .strafeTo(new Vector2d(12, 12))
+                        .lineTo(new Vector2d(12, 36))
+                        .build();
 
         waitForStart();
 
