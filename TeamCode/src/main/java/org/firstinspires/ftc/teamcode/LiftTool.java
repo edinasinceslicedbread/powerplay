@@ -1,52 +1,50 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-public class ElbowTool {
-    public MotorEx elbow;
+public class LiftTool {
+    public MotorEx lift;
     public LinearOpMode opmode;
 
     public void init(HardwareMap hwMap, LinearOpMode opmode) {
-        elbow = new MotorEx(hwMap, "elbow");
+        lift = new MotorEx(hwMap, "lift");
         this.opmode = opmode;
 
-        elbow.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        elbow.setRunMode(MotorEx.RunMode.PositionControl);
-        elbow.resetEncoder();
-        elbow.setTargetPosition(0);
+        lift.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        lift.setRunMode(MotorEx.RunMode.PositionControl);
+        lift.setInverted(true);
+        lift.resetEncoder();
+        lift.setTargetPosition(0);
 
         // Initialize the PID variables
-        elbow.setPositionCoefficient(0.05);
+        lift.setPositionCoefficient(0.05);
 
         // Reset the encoders and set tolerance
-        elbow.set(0);
-        elbow.setPositionTolerance(13.6);
+        lift.set(0);
+        lift.setPositionTolerance(13.6);
 
     }
 
     public void moveAbsolute(int target) {
 
         // Set some guardrails
-        target = MathUtils.clamp(target, 0, 930);
+        target = MathUtils.clamp(target, 0, 3000);
 
-        elbow.setTargetPosition(target);
+        lift.setTargetPosition(target);
 
         // Move at 75% power until position is reached, braking will start before it reaches the position
-        while (!elbow.atTargetPosition() && opmode.opModeIsActive()) {
-            elbow.set(.1);
+        while (!lift.atTargetPosition() && opmode.opModeIsActive()) {
+            lift.set(.2);
         }
 
-        elbow.stopMotor();
+        lift.stopMotor();
     }
 
     public void moveMaxRange() {
-        moveAbsolute(930);
+        moveAbsolute(3000);
     }
 
     public void moveMinRange() {
@@ -54,19 +52,19 @@ public class ElbowTool {
     }
 
     public int getCurrentPosition() {
-        return elbow.getCurrentPosition();
+        return lift.getCurrentPosition();
     }
 
     public void setTargetPosition(int targetPosition) {
-        elbow.setTargetPosition(targetPosition);
+        lift.setTargetPosition(targetPosition);
     }
 
     public void stopMotor() {
-        elbow.stopMotor();
+        lift.stopMotor();
     }
 
     public void set(double maxPower) {
-        elbow.set(maxPower);
+        lift.set(maxPower);
     }
 }
 
