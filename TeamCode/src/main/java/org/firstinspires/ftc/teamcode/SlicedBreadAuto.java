@@ -14,11 +14,10 @@ public class SlicedBreadAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(0, 0, 0);
+        Pose2d startPose = new Pose2d(36, -64.5, Math.toRadians(90);
 
         drive.setPoseEstimate(startPose);
-        TrajectorySequence trajSeq =
-                drive.trajectorySequenceBuilder(new Pose2d(36, -64.5, Math.toRadians(90)))
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d(36, -64.5, Math.toRadians(90)))
                         .lineTo(new Vector2d(36,-36))
                         .strafeTo(new Vector2d(12,-36))
                         .lineTo(new Vector2d(12,-12))
@@ -27,6 +26,8 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .strafeTo(new Vector2d(12, 12))
                         .lineTo(new Vector2d(12, 36))
                         .build();
+
+
 
         waitForStart();
 
