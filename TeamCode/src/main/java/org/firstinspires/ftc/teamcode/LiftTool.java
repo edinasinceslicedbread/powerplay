@@ -37,7 +37,7 @@ public class LiftTool {
 
         // Move at 75% power until position is reached, braking will start before it reaches the position
         while (!lift.atTargetPosition() && opmode.opModeIsActive()) {
-            lift.set(.2);
+            lift.set(.3);
         }
 
         lift.stopMotor();
