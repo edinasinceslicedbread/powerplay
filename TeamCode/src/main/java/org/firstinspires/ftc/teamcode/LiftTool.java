@@ -34,13 +34,8 @@ public class LiftTool {
         target = MathUtils.clamp(target, 0, 3000);
 
         lift.setTargetPosition(target);
+        lift.set(1);
 
-        // Move at 75% power until position is reached, braking will start before it reaches the position
-        while (!lift.atTargetPosition() && opmode.opModeIsActive()) {
-            lift.set(.2);
-        }
-
-        lift.stopMotor();
     }
 
     public void moveMaxRange() {

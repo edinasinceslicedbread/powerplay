@@ -38,21 +38,31 @@ public class SlicedBreadTeleOp extends LinearOpMode {
         // create lift object
         LiftTool lift = new LiftTool();
         lift.init(hardwareMap, this);
+        int liftTarget = 0;
 
         waitForStart();
 
         while (!isStopRequested()) {
 
             if(driverOp.getButton(GamepadKeys.Button.Y)) {
-                lift.moveMaxRange();
+                liftTarget=3000;
+            }
+
+            if(driverOp.getButton(GamepadKeys.Button.X)) {
+                liftTarget=2000;
+            }
+
+            if(driverOp.getButton(GamepadKeys.Button.B)) {
+                liftTarget=1000;
             }
 
             if(driverOp.getButton(GamepadKeys.Button.A)) {
-                lift.moveMinRange();
+                liftTarget=0;
             }
 
-            if (!FIELD_CENTRIC) {
+            lift.moveAbsolute(liftTarget);
 
+            if (!FIELD_CENTRIC) {
 
                 drive.driveRobotCentric(
                         driverOp.getLeftX(),
