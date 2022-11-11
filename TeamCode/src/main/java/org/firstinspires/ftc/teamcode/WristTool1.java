@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class WristTool {
+public class WristTool1 {
     public Servo wrist;
     public LinearOpMode opmode;
     public Telemetry telemetry;

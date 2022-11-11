@@ -40,6 +40,14 @@ public class SlicedBreadTeleOp extends LinearOpMode {
         lift.init(hardwareMap, this);
         int liftTarget = 0;
 
+        // create wrist object
+        WristTool1 wrist = new WristTool1();
+        wrist.init(hardwareMap);
+
+        // create intake object
+        IntakeTool intake = new IntakeTool();
+        intake.init(hardwareMap);
+
         waitForStart();
 
         while (!isStopRequested()) {
@@ -58,6 +66,30 @@ public class SlicedBreadTeleOp extends LinearOpMode {
 
             if(driverOp.getButton(GamepadKeys.Button.A)) {
                 liftTarget=0;
+            }
+
+            if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+                wrist.moveAbsolute(0);
+                telemetry.addLine("LEFT_BUMPER");
+                telemetry.update();
+            }
+
+            if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                wrist.moveAbsolute(1);
+                telemetry.addLine("RIGHT_BUMPER");
+                telemetry.update();
+            }
+
+            if(driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)==1) {
+                intake.moveAbsolute(0);
+                telemetry.addLine("LEFT_TRIGGER");
+                telemetry.update();
+            }
+
+            if(driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)==1) {
+                intake.moveAbsolute(1);
+                telemetry.addLine("RIGHT_TRIGGER");
+                telemetry.update();
             }
 
             lift.moveAbsolute(liftTarget);
