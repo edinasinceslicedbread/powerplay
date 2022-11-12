@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IntakeTool {
     public Servo intake;
-    public LinearOpMode opmode;
     public Telemetry telemetry;
 
     public void init(HardwareMap hwMap) {

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,7 +15,7 @@ public class SlicedBreadTeleOp extends LinearOpMode {
     // uses field-centric or robot-centric driving styles. The
     // differences between them can be read here in the docs:
     // https://docs.ftclib.org/ftclib/features/drivebases#control-scheme
-    static final boolean FIELD_CENTRIC = false;
+    static final boolean FIELD_CENTRIC = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,11 +36,11 @@ public class SlicedBreadTeleOp extends LinearOpMode {
 
         // create lift object
         LiftTool lift = new LiftTool();
-        lift.init(hardwareMap, this);
-        int liftTarget = 0;
+        lift.init(hardwareMap);
+        int liftTarget = 200;
 
         // create wrist object
-        WristTool1 wrist = new WristTool1();
+        WristTool wrist = new WristTool();
         wrist.init(hardwareMap);
 
         // create intake object
@@ -65,7 +64,7 @@ public class SlicedBreadTeleOp extends LinearOpMode {
             }
 
             if(driverOp.getButton(GamepadKeys.Button.A)) {
-                liftTarget=0;
+                liftTarget=200;
             }
 
             if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -95,27 +94,21 @@ public class SlicedBreadTeleOp extends LinearOpMode {
             lift.moveAbsolute(liftTarget);
 
             if (!FIELD_CENTRIC) {
-
                 drive.driveRobotCentric(
                         driverOp.getLeftX(),
                         driverOp.getLeftY(),
                         driverOp.getRightX(),
                         false
                 );
-
             } else {
-
                 drive.driveFieldCentric(
                         driverOp.getLeftX(),
                         driverOp.getLeftY(),
                         driverOp.getRightX(),
-                        imu.getRotation2d().getDegrees()-180,   // gyro value passed in here must be in degrees
+                        imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                         false
                 );
-
             }
-
         }
     }
-
 }

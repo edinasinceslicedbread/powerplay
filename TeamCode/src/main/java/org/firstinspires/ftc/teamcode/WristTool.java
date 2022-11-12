@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class WristTool1 {
+public class WristTool {
     public Servo wrist;
-    public LinearOpMode opmode;
     public Telemetry telemetry;
 
     public void init(HardwareMap hwMap) {

@@ -7,11 +7,9 @@ import com.arcrobotics.ftclib.util.MathUtils;
 
 public class LiftTool {
     public MotorEx lift;
-    public LinearOpMode opmode;
 
-    public void init(HardwareMap hwMap, LinearOpMode opmode) {
+    public void init(HardwareMap hwMap) {
         lift = new MotorEx(hwMap, "lift");
-        this.opmode = opmode;
 
         lift.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         lift.setRunMode(MotorEx.RunMode.PositionControl);
@@ -34,7 +32,11 @@ public class LiftTool {
         target = MathUtils.clamp(target, 0, 3000);
 
         lift.setTargetPosition(target);
-        lift.set(1);
+        if(lift.getCurrentPosition() > target) {
+            lift.set(.01);
+        } else {
+            lift.set(.1);
+        }
 
     }
 
