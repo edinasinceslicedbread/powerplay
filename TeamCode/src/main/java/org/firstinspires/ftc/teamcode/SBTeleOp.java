@@ -69,6 +69,9 @@ public class SBTeleOp extends OpMode
     private IntakeTool intake = null;
     private int liftTarget,intakeTarget;
 
+    private double turbo = 0.25;
+    private int intakeState = 0;
+
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
 
@@ -106,7 +109,7 @@ public class SBTeleOp extends OpMode
         // init Wrist
         wrist = new WristTool();
         wrist.init(hardwareMap);
-        wrist.moveAbsolute(0);
+        wrist.moveAbsolute(1);
 
         // init Intake
         intake = new IntakeTool();
@@ -140,17 +143,17 @@ public class SBTeleOp extends OpMode
 
         // Full Height
         if(driverOp.getButton(GamepadKeys.Button.Y)) {
-            liftTarget=3000;
+            liftTarget=3500;
         }
 
         // Mid Height
         if(driverOp.getButton(GamepadKeys.Button.X)) {
-            liftTarget=2000;
+            liftTarget=2600;
         }
 
         // Short Height
         if(driverOp.getButton(GamepadKeys.Button.B)) {
-            liftTarget=1000;
+            liftTarget=1750;
         }
 
         // Bottom
@@ -168,32 +171,51 @@ public class SBTeleOp extends OpMode
             wrist.moveAbsolute(1);
         }
 
-        // Intake
+        // Eject
         if(driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)==1) {
             intakeTarget=0;
+            intakeState=0;
         }
 
-        // Eject
+        // Intake
         if(driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)==1) {
-            liftTarget = 100;
-            intakeTarget=1;
+            intakeState=1;
         }
 
-        lift.moveAbsolute(liftTarget);
-        intake.moveAbsolute(intakeTarget);
+        if (intakeState==0) {           // normal operation
+            lift.moveAbsolute(liftTarget);
+            intake.moveAbsolute(intakeTarget);
+        } else if (intakeState==1) {    // open the grip
+            intake.moveAbsolute(0);
+            intakeTarget = 0;
+            intakeState = 2;
+        } else if (intakeState==2) {    // lower to position
+            lift.moveAbsolute(80);
+            liftTarget=80;
+            if (lift.getCurrentPosition() == 80) {
+                intakeState = 3;
+            }
+        } else if (intakeState==3) {    // close grip
+            intake.moveAbsolute(1);
+            intakeTarget = 1;
+            intakeState=4;
+        } else if (intakeState==4) {    // safe drive height
+            liftTarget = 300;
+            intakeState = 0;
+        }
 
         if (!FIELD_CENTRIC) {
             drive.driveRobotCentric(
-                    driverOp.getLeftX(),
-                    driverOp.getLeftY(),
-                    driverOp.getRightX(),
+                    driverOp.getLeftX()*turbo,
+                    driverOp.getLeftY()*turbo,
+                    driverOp.getRightX()*turbo,
                     false
             );
         } else {
             drive.driveFieldCentric(
-                    driverOp.getLeftX(),
-                    driverOp.getLeftY(),
-                    driverOp.getRightX(),
+                    driverOp.getLeftX()*turbo,
+                    driverOp.getLeftY()*turbo,
+                    driverOp.getRightX()*turbo,
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                     false
             );
