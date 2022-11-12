@@ -43,6 +43,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.AutonomousOptions;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -62,29 +63,89 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 //@Disabled
 public class SlicedBreadAutoMenu extends OpMode {
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
+    AutonomousOptions autonomousOptions = new AutonomousOptions();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     Pose2d startPose;
     TrajectorySequence trajSeq;
+    private float x,y,degrees=0;
+    private int parkZone = 24; // Set this variable when we read the AprilTag
 
     /*
-     * Code to run ONCE when the driver hits INIT
+     * Code to run OCE when the driver hits INIT
      */
     @Override
     public void init() {
         autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
-        startPose = new Pose2d(36, -64.5, Math.toRadians(90));
-        drive.setPoseEstimate(startPose);
-        trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(36,-36))
-                .strafeTo(new Vector2d(12,-36))
-                .lineTo(new Vector2d(12,-12))
-                .strafeTo(new Vector2d(36,-12))
-                .lineTo(new Vector2d(36,12))
-                .strafeTo(new Vector2d(12, 12))
-                .lineTo(new Vector2d(12, 36))
-                .build();
+
+        if(autonomousOptions.getAllianceColor() == AutonomousOptions.AllianceColor.Blue) {
+            if(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
+                x = -36;
+                y = 64;
+                degrees = -90;
+
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
+                drive.setPoseEstimate(startPose);
+                trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .lineTo(new Vector2d(-36,12))
+                        .turn(Math.toRadians(45))
+                        .forward(6)
+                        .waitSeconds(6)
+                        .back(6)
+                        .turn(Math.toRadians(-45))
+                        .strafeLeft(parkZone)
+                        .build();
+            } else {  // Blue Left
+                x = 36;
+                y = 64;
+                degrees = -90;
+
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
+                drive.setPoseEstimate(startPose);
+                trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .lineTo(new Vector2d(36,12))
+                        .turn(Math.toRadians(-45))
+                        .forward(6)
+                        .waitSeconds(6)
+                        .back(6)
+                        .turn(Math.toRadians(45))
+                        .strafeLeft(parkZone)
+                        .build();
+            }
+        } else {  // Red Alliance
+            if(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
+                x = 36;
+                y = -64;
+                degrees = 90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
+                drive.setPoseEstimate(startPose);
+                trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .lineTo(new Vector2d(36,-12))
+                        .turn(Math.toRadians(45))
+                        .forward(6)
+                        .waitSeconds(6)
+                        .back(6)
+                        .turn(Math.toRadians(-45))
+                        .strafeLeft(parkZone)
+                        .build();
+            } else {  // Red Left
+                x = -36;
+                y = -64;
+                degrees = 90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
+                drive.setPoseEstimate(startPose);
+                trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .lineTo(new Vector2d(-36,-12))
+                        .turn(Math.toRadians(-45))
+                        .forward(6)
+                        .waitSeconds(6)
+                        .back(6)
+                        .turn(Math.toRadians(45))
+                        .strafeLeft(parkZone)
+                        .build();
+            }
+        }
     }
 
     /*
