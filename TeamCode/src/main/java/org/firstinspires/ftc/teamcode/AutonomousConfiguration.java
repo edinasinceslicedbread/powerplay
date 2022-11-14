@@ -115,12 +115,17 @@ public class AutonomousConfiguration {
 
     // Call this in the init_loop from your opMode. It will returns true if you press the
     // game pad Start.
-    public void init_loop() {
+    public boolean init_loop() {
+
+        boolean doneFlag = false;
+
         gamepadEx.readButtons();
+
         //Set default options (ignore what was saved to the file.)
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.BACK)) {
             resetOptions();
         }
+
         //Alliance Color
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.X)) {
             autonomousOptions.setAllianceColor(AutonomousOptions.AllianceColor.Blue);
@@ -229,7 +234,10 @@ public class AutonomousConfiguration {
             SaveOptions();
             savedToFile = true;
             teleSavedToFile.setValue(true);
+            doneFlag = true;
         }
+
+        return doneFlag;
     }
 
     // Default selections if driver does not select anything.

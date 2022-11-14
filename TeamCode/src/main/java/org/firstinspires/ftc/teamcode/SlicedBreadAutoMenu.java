@@ -39,10 +39,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
 import org.firstinspires.ftc.teamcode.AutonomousOptions;
 
 /**
@@ -59,18 +61,20 @@ import org.firstinspires.ftc.teamcode.AutonomousOptions;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Options Menu", group = "Autonomous", preselectTeleOp = "Color")
-//@Disabled
+@Autonomous(name = "Sliced Bread Menu", group = "Autonomous", preselectTeleOp = "Color")
 public class SlicedBreadAutoMenu extends OpMode {
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
     AutonomousOptions autonomousOptions = new AutonomousOptions();
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+    SampleMecanumDrive drive;
     Pose2d startPose;
     TrajectorySequence trajSeq;
     private float x,y,degrees=0;
     private int parkZone = 24; // Set this variable when we read the AprilTag
+    boolean runPath = true;
 
     /*
      * Code to run OCE when the driver hits INIT
@@ -78,7 +82,33 @@ public class SlicedBreadAutoMenu extends OpMode {
     @Override
     public void init() {
         autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
+    }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+        autonomousConfiguration.init_loop();
+    }
+
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+
+        if (!autonomousConfiguration.getReadyToStart()) {
+            telemetry.addData("Alert", "Not ready to start!");
+            telemetry.speak("Not ready to start!");
+            runtime.reset();
+            while (runtime.seconds() < 2) {
+            }
+            requestOpModeStop();
+        }
+        runtime.reset();
+
+        drive = new SampleMecanumDrive(hardwareMap);
         if(autonomousOptions.getAllianceColor() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
                 x = -36;
@@ -91,7 +121,6 @@ public class SlicedBreadAutoMenu extends OpMode {
                         .lineTo(new Vector2d(-36,12))
                         .turn(Math.toRadians(45))
                         .forward(6)
-                        .waitSeconds(6)
                         .back(6)
                         .turn(Math.toRadians(-45))
                         .strafeLeft(parkZone)
@@ -107,7 +136,6 @@ public class SlicedBreadAutoMenu extends OpMode {
                         .lineTo(new Vector2d(36,12))
                         .turn(Math.toRadians(-45))
                         .forward(6)
-                        .waitSeconds(6)
                         .back(6)
                         .turn(Math.toRadians(45))
                         .strafeLeft(parkZone)
@@ -124,7 +152,6 @@ public class SlicedBreadAutoMenu extends OpMode {
                         .lineTo(new Vector2d(36,-12))
                         .turn(Math.toRadians(45))
                         .forward(6)
-                        .waitSeconds(6)
                         .back(6)
                         .turn(Math.toRadians(-45))
                         .strafeLeft(parkZone)
@@ -139,7 +166,6 @@ public class SlicedBreadAutoMenu extends OpMode {
                         .lineTo(new Vector2d(-36,-12))
                         .turn(Math.toRadians(-45))
                         .forward(6)
-                        .waitSeconds(6)
                         .back(6)
                         .turn(Math.toRadians(45))
                         .strafeLeft(parkZone)
@@ -149,37 +175,17 @@ public class SlicedBreadAutoMenu extends OpMode {
     }
 
     /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-        autonomousConfiguration.init_loop();
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
-        if (!autonomousConfiguration.getReadyToStart()) {
-            telemetry.addData("Alert", "Not ready to start!");
-            telemetry.speak("Not ready to start!");
-            runtime.reset();
-            while (runtime.seconds() < 2) {
-            }
-            requestOpModeStop();
-        }
-        runtime.reset();
-        drive.followTrajectorySequence(trajSeq);
-
-    }
-
-    /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
         // Show the elapsed game time.
+
+        if (runPath) {
+            drive.followTrajectorySequence(trajSeq);
+            runPath = false;
+        }
+
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 

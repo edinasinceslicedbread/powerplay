@@ -29,13 +29,13 @@ public class LiftTool {
     public void moveAbsolute(int target) {
 
         // Set some guardrails
-        target = MathUtils.clamp(target, 0, 3000);
+        target = MathUtils.clamp(target, 0, 4500);
 
         lift.setTargetPosition(target);
         if(lift.getCurrentPosition() > target) {
-            lift.set(.01);
-        } else {
             lift.set(.1);
+        } else {
+            lift.set(.2);
         }
 
     }
