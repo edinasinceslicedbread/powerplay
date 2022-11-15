@@ -52,7 +52,7 @@ public class AprilTagDemo extends LinearOpMode {
     double cy = 620;
 
     // UNITS ARE METERS
-    double tagsize = 0.016764;
+    double tagsize = 0.0444;
 
     int numFramesWithoutDetection = 0;
 
