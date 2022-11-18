@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Sliced Bread TeleOp", group="Iterative Opmode")
+@TeleOp(name="SlicedBread TeleOp", group="Iterative Opmode")
 public class SlicedBreadTeleOp extends OpMode
 {
     // Declare OpMode members.
@@ -66,12 +66,11 @@ public class SlicedBreadTeleOp extends OpMode
     private int liftTarget;
     private double intakeTarget,wristTarget;
 
-    private double turbo = 0.25;
+    private double turbo = 0.50;
     private int intakeState = 0;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
-
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -140,7 +139,7 @@ public class SlicedBreadTeleOp extends OpMode
 
         // Full Height
         if(driverOp.getButton(GamepadKeys.Button.Y)) {
-            liftTarget=2900;
+            liftTarget=2950;
         }
 
         // Mid Height
@@ -150,7 +149,7 @@ public class SlicedBreadTeleOp extends OpMode
 
         // Short Height
         if(driverOp.getButton(GamepadKeys.Button.B)) {
-            liftTarget=1300;
+            liftTarget=1250;
         }
 
         // Bottom
@@ -175,8 +174,7 @@ public class SlicedBreadTeleOp extends OpMode
 
         // Eject
         if(driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)==1) {
-            intakeTarget=0;
-            intakeState=0;
+            intakeState=-1;
         }
 
         // Intake
@@ -207,11 +205,29 @@ public class SlicedBreadTeleOp extends OpMode
                 intakeState=0;
             }
             intakeState=4;
-        } else if (intakeState==4) {    // safe drive height
+        } else if (intakeState==4) {        // safe drive height
             liftTarget = 300;
             intakeState = 0;
-        }
+        } else if (intakeState==-1) {       // Ejecting
+            // check if we are in low position
+            // if yes, move down before ejecting
+            // if no, eject
 
+            if (liftTarget == 300) {        // Low position
+                // move down
+                liftTarget=120;               // go to bottom
+                intakeState=-2;
+            } else {
+                intake.moveAbsolute(0);
+                intakeState = 0;
+            }
+        } else if (intakeState==-2) {        // 2nd stage of low eject
+            intake.moveAbsolute(0);     // open intake
+            intakeState = -3;
+        } else if (intakeState==-3) {       // Last step - go back to drive height
+            liftTarget=300;
+            intakeState = 0;
+        }
         wrist.moveAbsolute(wristTarget);
 
         if (!FIELD_CENTRIC) {
