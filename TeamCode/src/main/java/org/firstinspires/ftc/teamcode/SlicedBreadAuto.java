@@ -26,7 +26,7 @@ public class SlicedBreadAuto extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
-    AutonomousOptions autonomousOptions = new AutonomousOptions();
+    //AutonomousOptions autonomousOptions = new AutonomousOptions();
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -67,7 +67,7 @@ public class SlicedBreadAuto extends LinearOpMode {
 
     // Game initialization
     private float x,y,degrees=0;
-    private int parkZone = 24; // Set this variable when we read the AprilTag
+    private double parkZone = 24; // Set this variable when we read the AprilTag
     boolean menuFlag = false;
 
     @Override
@@ -161,7 +161,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         if (detection.id==1) {
                             parkZone = 24;
                         } else if (detection.id==2) {
-                            parkZone = 0;
+                            parkZone = 0.1;
                         } else if (detection.id==3) {
                             parkZone = -24;
                         }
@@ -181,8 +181,8 @@ public class SlicedBreadAuto extends LinearOpMode {
 
         }
 
-        if(autonomousOptions.getAllianceColor() == AutonomousOptions.AllianceColor.Blue) {
-            if(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
+        if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
+            if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
                 x = -36;
                 y = 64;
                 degrees = -90;
@@ -224,7 +224,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .build();
             }
         } else {  // Red Alliance
-            if(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
+            if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
                 x = 36;
                 y = -64;
                 degrees = 90;
