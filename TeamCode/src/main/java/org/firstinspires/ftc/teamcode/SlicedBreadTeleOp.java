@@ -56,7 +56,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class SlicedBreadTeleOp extends OpMode
 {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive drive = null;
     private RevIMU imu = null;
     private GamepadEx driverOp, toolOp = null;
@@ -66,7 +66,7 @@ public class SlicedBreadTeleOp extends OpMode
     private int liftTarget;
     private double intakeTarget,wristTarget;
 
-    private double turbo = 0.50;
+    private final double turbo = 0.50;
     private int intakeState = 0;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
@@ -139,17 +139,17 @@ public class SlicedBreadTeleOp extends OpMode
 
         // Full Height
         if(driverOp.getButton(GamepadKeys.Button.Y)) {
-            liftTarget=2950;
+            liftTarget=3000;
         }
 
         // Mid Height
         if(driverOp.getButton(GamepadKeys.Button.X)) {
-            liftTarget=2100;
+            liftTarget=2150;
         }
 
         // Short Height
         if(driverOp.getButton(GamepadKeys.Button.B)) {
-            liftTarget=1250;
+            liftTarget=1300;
         }
 
         // Bottom
@@ -192,7 +192,7 @@ public class SlicedBreadTeleOp extends OpMode
             intakeState = 2;
         } else if (intakeState==2) {    // lower to position
             lift.moveAbsolute(100);
-            liftTarget=100;
+            liftTarget=150;
             if (lift.getCurrentPosition() < 100) {
                 intakeState = 3;
             }
@@ -215,10 +215,10 @@ public class SlicedBreadTeleOp extends OpMode
 
             if (liftTarget == 300) {        // Low position
                 // move down
-                liftTarget=120;               // go to bottom
+                liftTarget=150;               // go to bottom
                 intakeState=-2;
             } else {
-                intake.moveAbsolute(0);
+                intakeTarget = 0;
                 intakeState = 0;
             }
         } else if (intakeState==-2) {        // 2nd stage of low eject

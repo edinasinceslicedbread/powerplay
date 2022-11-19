@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -26,10 +30,9 @@ public class SlicedBreadAuto extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
-    //AutonomousOptions autonomousOptions = new AutonomousOptions();
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     // Vision initialization
     OpenCvCamera camera;
@@ -57,23 +60,43 @@ public class SlicedBreadAuto extends LinearOpMode {
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
-    // Roadrunner Initialization
-    SampleMecanumDrive drive;
-    private LiftTool lift = null;
-    private IntakeTool intake = null;
+    final double OPEN = 0;
+    final double CLOSED = 1;
+
+    final int HIGH = 2950;
+    final int DRIVE = 300;
+
+    final double ZONE_ONE = 24;
+    final double ZONE_TWO = 0.01;
+    final double ZONE_THREE = -24;
 
     Pose2d startPose;
     TrajectorySequence trajSeq;
 
-    // Game initialization
-    private float x,y,degrees=0;
-    private double parkZone = 24; // Set this variable when we read the AprilTag
-    boolean menuFlag = false;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        // Game initialization
+        float x,y,degrees;
+        double parkZone = ZONE_TWO; // Set this variable when we read the AprilTag
+        boolean menuFlag = false;
+
+        // init Intake
+        IntakeTool intake = new IntakeTool();
+        intake.init(hardwareMap);
+
+        WristTool wrist = new WristTool();
+        wrist.init(hardwareMap);
+
+        // init lift
+        DcMotor lift = hardwareMap.dcMotor.get("lift");
+
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // init Drive
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
 
         while (!menuFlag && !isStarted()) {
@@ -90,14 +113,6 @@ public class SlicedBreadAuto extends LinearOpMode {
             requestOpModeStop();
         }
         runtime.reset();
-
-        // init Lift
-        lift = new LiftTool();
-        lift.init(hardwareMap);
-
-        // init Intake
-        intake = new IntakeTool();
-        intake.init(hardwareMap);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -120,6 +135,9 @@ public class SlicedBreadAuto extends LinearOpMode {
         });
 
         waitForStart();
+
+        //intake.moveAbsolute(CLOSED);
+        //lift.moveAbsolute(DRIVE);
 
         while (opModeIsActive() && !tagFound) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
@@ -159,11 +177,11 @@ public class SlicedBreadAuto extends LinearOpMode {
                     for (AprilTagDetection detection : detections) {
 
                         if (detection.id==1) {
-                            parkZone = 24;
+                            parkZone = ZONE_ONE;
                         } else if (detection.id==2) {
-                            parkZone = 0.1;
+                            parkZone = ZONE_TWO;
                         } else if (detection.id==3) {
-                            parkZone = -24;
+                            parkZone = ZONE_THREE;
                         }
 
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
@@ -193,13 +211,24 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .lineTo(new Vector2d(-36,12))
                         .turn(Math.toRadians(45))
                         .forward(6)
-                        .addTemporalMarker(() -> lift.setTargetPosition(2950))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
                         .forward(2)
-                        .addTemporalMarker(() -> intake.moveAbsolute(0))
+                        .waitSeconds(2)
+                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
                         .back(2)
-                        .addTemporalMarker(() -> lift.setTargetPosition(150))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(DRIVE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
                         .back(6)
                         .turn(Math.toRadians(-45))
+                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
             } else {  // Blue Left
@@ -213,13 +242,24 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .lineTo(new Vector2d(36,12))
                         .turn(Math.toRadians(-45))
                         .forward(6)
-                        .addTemporalMarker(() -> lift.setTargetPosition(2950))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .forward(2)
-                        .addTemporalMarker(() -> intake.moveAbsolute(0))
+                        .waitSeconds(2)
+                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
                         .back(2)
-                        .addTemporalMarker(() -> lift.setTargetPosition(150))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(DRIVE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .back(6)
                         .turn(Math.toRadians(45))
+                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
             }
@@ -234,13 +274,24 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .lineTo(new Vector2d(36,-12))
                         .turn(Math.toRadians(45))
                         .forward(6)
-                        .addTemporalMarker(() -> lift.setTargetPosition(2950))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .forward(2)
-                        .addTemporalMarker(() -> intake.moveAbsolute(0))
+                        .waitSeconds(2)
+                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
                         .back(2)
-                        .addTemporalMarker(() -> lift.setTargetPosition(150))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(DRIVE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .back(6)
                         .turn(Math.toRadians(-45))
+                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
             } else {  // Red Left
@@ -253,13 +304,24 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .lineTo(new Vector2d(-36,-12))
                         .turn(Math.toRadians(-45))
                         .forward(6)
-                        .addTemporalMarker(() -> lift.setTargetPosition(2950))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .forward(2)
-                        .addTemporalMarker(() -> intake.moveAbsolute(0))
+                        .waitSeconds(2)
+                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
                         .back(2)
-                        .addTemporalMarker(() -> lift.setTargetPosition(150))
+                        .addDisplacementMarker(() -> {
+                            lift.setTargetPosition(DRIVE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(0.1);
+                        })
                         .back(6)
                         .turn(Math.toRadians(45))
+                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
             }
