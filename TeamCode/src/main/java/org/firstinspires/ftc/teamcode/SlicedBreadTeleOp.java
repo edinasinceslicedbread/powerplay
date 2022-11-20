@@ -69,6 +69,17 @@ public class SlicedBreadTeleOp extends OpMode
     private final double turbo = 0.50;
     private int intakeState = 0;
 
+    final int HIGH = 2950;
+    final int MEDIUM = 2100;
+    final int LOW = 1250;
+    final int DRIVE = 300;
+    final int PICKUP = 125;
+
+    final double CLOSED = 1.0;
+    final double OPEN = 0;
+    final double FRONT = 1.0;
+    final double BACK = 0;
+
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
 
@@ -95,21 +106,20 @@ public class SlicedBreadTeleOp extends OpMode
         // the extended gamepad object
         driverOp = new GamepadEx(gamepad1);
         toolOp = new GamepadEx(gamepad2);
-
         // init Lift
         lift = new LiftTool();
         lift.init(hardwareMap);
-        liftTarget = 300;
+        liftTarget = DRIVE;
 
         // init Wrist
         wrist = new WristTool();
         wrist.init(hardwareMap);
-        wristTarget=1;
+        wristTarget=FRONT;
 
         // init Intake
         intake = new IntakeTool();
         intake.init(hardwareMap);
-        intake.moveAbsolute(0);
+        intake.moveAbsolute(OPEN);
         intakeTarget = 0;
 
         // Tell the driver that initialization is complete.
@@ -139,36 +149,40 @@ public class SlicedBreadTeleOp extends OpMode
 
         // Full Height
         if(driverOp.getButton(GamepadKeys.Button.Y)) {
-            liftTarget=3000;
+            liftTarget=HIGH;
+            intakeState=0;
         }
 
         // Mid Height
         if(driverOp.getButton(GamepadKeys.Button.X)) {
-            liftTarget=2150;
+            liftTarget=MEDIUM;
+            intakeState=0;
         }
 
         // Short Height
         if(driverOp.getButton(GamepadKeys.Button.B)) {
-            liftTarget=1300;
+            liftTarget=LOW;
+            intakeState=0;
         }
 
         // Bottom
         if(driverOp.getButton(GamepadKeys.Button.A)) {
-            liftTarget=300;
+            liftTarget=DRIVE;
+            intakeState=0;
         }
 
         // Front
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-            wristTarget=0;
+        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget >= DRIVE) {
+            wristTarget=BACK;
         }
 
         // Back
-        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-            wristTarget=1;
+        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= DRIVE) {
+            wristTarget=FRONT;
         }
 
         // Middle
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= DRIVE) {
             wristTarget=0.5;
         }
 
@@ -178,7 +192,7 @@ public class SlicedBreadTeleOp extends OpMode
         }
 
         // Intake
-        if(driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)==1) {
+        if(driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)==1 && liftTarget <= LOW) {
             intakeState=1;
         }
 
@@ -186,19 +200,19 @@ public class SlicedBreadTeleOp extends OpMode
             lift.moveAbsolute(liftTarget);
             intake.moveAbsolute(intakeTarget);
         } else if (intakeState==1) {    // open the grip
-            intake.moveAbsolute(0);
+            intake.moveAbsolute(OPEN);
 
-            intakeTarget = 0;
+            intakeTarget = OPEN;
             intakeState = 2;
         } else if (intakeState==2) {    // lower to position
-            lift.moveAbsolute(100);
-            liftTarget=150;
-            if (lift.getCurrentPosition() < 100) {
+            lift.moveAbsolute(70);
+            liftTarget=PICKUP;
+            if (lift.getCurrentPosition() < PICKUP) {
                 intakeState = 3;
             }
         } else if (intakeState==3) {    // close grip
-            intake.moveAbsolute(1);
-            intakeTarget = 1;
+            intake.moveAbsolute(CLOSED);
+            intakeTarget = CLOSED;
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -206,28 +220,29 @@ public class SlicedBreadTeleOp extends OpMode
             }
             intakeState=4;
         } else if (intakeState==4) {        // safe drive height
-            liftTarget = 300;
+            liftTarget = DRIVE;
             intakeState = 0;
         } else if (intakeState==-1) {       // Ejecting
             // check if we are in low position
             // if yes, move down before ejecting
             // if no, eject
-
-            if (liftTarget == 300) {        // Low position
-                // move down
-                liftTarget=150;               // go to bottom
-                intakeState=-2;
+            if (liftTarget==DRIVE) {
+                liftTarget = PICKUP;               // go to bottom
+                intakeState = -2;
             } else {
-                intakeTarget = 0;
+                intake.moveAbsolute(OPEN);
                 intakeState = 0;
+                intakeTarget = OPEN;
             }
         } else if (intakeState==-2) {        // 2nd stage of low eject
-            intake.moveAbsolute(0);     // open intake
+            intake.moveAbsolute(OPEN);     // open intake
+            intakeTarget=OPEN;
             intakeState = -3;
         } else if (intakeState==-3) {       // Last step - go back to drive height
-            liftTarget=300;
+            liftTarget=DRIVE;
             intakeState = 0;
         }
+
         wrist.moveAbsolute(wristTarget);
 
         if (!FIELD_CENTRIC) {

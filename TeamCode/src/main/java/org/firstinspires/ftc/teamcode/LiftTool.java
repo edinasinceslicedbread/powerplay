@@ -33,7 +33,7 @@ public class LiftTool {
 
         lift.setTargetPosition(target);
         if(lift.getCurrentPosition() > target) {
-            lift.set(.1);
+            lift.set(.05);
         } else {
             lift.set(.2);
         }

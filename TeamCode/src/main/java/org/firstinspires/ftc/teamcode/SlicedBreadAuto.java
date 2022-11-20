@@ -66,12 +66,12 @@ public class SlicedBreadAuto extends LinearOpMode {
     final int HIGH = 2950;
     final int DRIVE = 300;
 
-    final double ZONE_ONE = 24;
-    final double ZONE_TWO = 0.01;
-    final double ZONE_THREE = -24;
+    final double ZONE_ONE = 49;
+    final double ZONE_TWO = 25;
+    final double ZONE_THREE = 0.01;
 
-    Pose2d startPose;
-    TrajectorySequence trajSeq;
+    Pose2d startPose, startPose0;
+    TrajectorySequence trajSeq,trajSeq0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -136,8 +136,15 @@ public class SlicedBreadAuto extends LinearOpMode {
 
         waitForStart();
 
-        //intake.moveAbsolute(CLOSED);
-        //lift.moveAbsolute(DRIVE);
+        x = 0;
+        y = 0;
+        degrees = 0;
+        startPose0 = new Pose2d(x, y, Math.toRadians(degrees));
+        drive.setPoseEstimate(startPose0);
+        trajSeq0 = drive.trajectorySequenceBuilder(startPose0)
+                .strafeLeft(6)
+                .build();
+        drive.followTrajectorySequence(trajSeq0);
 
         while (opModeIsActive() && !tagFound) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
@@ -196,131 +203,144 @@ public class SlicedBreadAuto extends LinearOpMode {
 
                 telemetry.update();
             }
+        }
 
+        double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
+        while (runtime.seconds() < delay) {
         }
 
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
-                x = -36;
+                x = -30;
                 y = 64;
                 degrees = -90;
 
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .lineTo(new Vector2d(-36,12))
+                        .strafeLeft(18)
+                        .lineTo(new Vector2d(-12,36))
                         .turn(Math.toRadians(45))
-                        .forward(6)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .forward(2)
                         .waitSeconds(2)
-                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
-                        .back(2)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .forward(9)
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(2)
+                        .back(9)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .back(6)
-                        .turn(Math.toRadians(-45))
-                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
                         .waitSeconds(1)
-                        .strafeLeft(parkZone)
+                        .turn(Math.toRadians(-45))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Blue Left
-                x = 36;
+                x = 42;
                 y = 64;
                 degrees = -90;
 
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .lineTo(new Vector2d(36,12))
+                        .strafeRight(30)
+                        .lineTo(new Vector2d(12,36))
                         .turn(Math.toRadians(-45))
-                        .forward(6)
-                        .addDisplacementMarker(() -> {
+                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .forward(2)
                         .waitSeconds(2)
-                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
-                        .back(2)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .forward(9)
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(2)
+                        .back(9)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .back(6)
-                        .turn(Math.toRadians(45))
-                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
                         .waitSeconds(1)
+                        .strafeLeft(1.5)
+                        .turn(Math.toRadians(45))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
                         .strafeLeft(parkZone)
                         .build();
             }
         } else {  // Red Alliance
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
-                x = 36;
+                x = 30;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .lineTo(new Vector2d(36,-12))
+                        .strafeLeft(18)
+                        .lineTo(new Vector2d(12,-36))
                         .turn(Math.toRadians(45))
-                        .forward(6)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .forward(2)
                         .waitSeconds(2)
-                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
-                        .back(2)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .forward(9)
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(2)
+                        .back(9)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .back(6)
-                        .turn(Math.toRadians(-45))
-                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
                         .waitSeconds(1)
-                        .strafeLeft(parkZone)
+                        .turn(Math.toRadians(-45))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .waitSeconds(1)
+                        .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Red Left
-                x = -36;
+                x = -42;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .lineTo(new Vector2d(-36,-12))
+                        .strafeRight(30)
+                        .lineTo(new Vector2d(-12,-36))
                         .turn(Math.toRadians(-45))
-                        .forward(6)
-                        .addDisplacementMarker(() -> {
+                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .forward(2)
                         .waitSeconds(2)
-                        .addDisplacementMarker(() -> intake.moveAbsolute(OPEN))
-                        .back(2)
-                        .addDisplacementMarker(() -> {
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .forward(9)
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(2)
+                        .back(9)
+                        .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(0.1);
+                            lift.setPower(1);
                         })
-                        .back(6)
+                        .waitSeconds(1)
+                        .strafeLeft(1.5)
                         .turn(Math.toRadians(45))
-                        .addDisplacementMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
                         .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
