@@ -63,7 +63,7 @@ public class SlicedBreadAuto extends LinearOpMode {
     final double OPEN = 0;
     final double CLOSED = 1;
 
-    final int HIGH = 2950;
+    final int HIGH = 2900;
     final int DRIVE = 300;
 
     final double ZONE_ONE = 49;
@@ -228,10 +228,10 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(2)
                         .addTemporalMarker(() -> wrist.moveAbsolute(1))
-                        .forward(9)
+                        .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
-                        .back(9)
+                        .back(8)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -261,10 +261,10 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(2)
                         .addTemporalMarker(() -> wrist.moveAbsolute(1))
-                        .forward(9)
+                        .forward(7.5)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
-                        .back(9)
+                        .back(7.5)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -295,10 +295,10 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(2)
                         .addTemporalMarker(() -> wrist.moveAbsolute(1))
-                        .forward(9)
+                        .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
-                        .back(9)
+                        .back(8)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -328,10 +328,10 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(2)
                         .addTemporalMarker(() -> wrist.moveAbsolute(1))
-                        .forward(9)
+                        .forward(7.5)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
-                        .back(9)
+                        .back(7.5)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);

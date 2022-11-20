@@ -69,7 +69,7 @@ public class SlicedBreadTeleOp extends OpMode
     private final double turbo = 0.50;
     private int intakeState = 0;
 
-    final int HIGH = 2950;
+    final int HIGH = 2900;
     final int MEDIUM = 2100;
     final int LOW = 1250;
     final int DRIVE = 300;

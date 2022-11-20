@@ -15,15 +15,28 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(289.15), Math.toRadians(60), 10.32)
                 .setDimensions(16,15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(36, 64.5, Math.toRadians(-90)))
-                                .lineTo(new Vector2d(36,12))
-                                .turn(Math.toRadians(-45))
-                                .forward(6)
-                                .waitSeconds(6)
-                                .back(6)
-                                .turn(Math.toRadians(45))
-                                .strafeLeft(-24) // modify for April Tag
-                                .build()
+                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
+                .strafeRight(30)
+                .lineTo(new Vector2d(-12,-36))
+                .turn(Math.toRadians(-45))
+                .strafeRight(1.5)
+                .addTemporalMarker(() -> {
+                })
+                .waitSeconds(2)
+                .addTemporalMarker(() -> {})
+                .forward(9)
+                                .addTemporalMarker(() -> {})
+                .waitSeconds(2)
+                .back(9)
+                                .addTemporalMarker(() -> {})
+
+                .waitSeconds(1)
+                .strafeLeft(1.5)
+                .turn(Math.toRadians(45))
+                                .addTemporalMarker(() -> {})
+                .waitSeconds(1)
+                .strafeLeft(24)
+                .build()
                 );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
