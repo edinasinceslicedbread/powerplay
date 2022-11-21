@@ -172,12 +172,12 @@ public class SlicedBreadTeleOp extends OpMode
         }
 
         // Front
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget >= DRIVE) {
+        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget >= LOW) {
             wristTarget=BACK;
         }
 
         // Back
-        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= DRIVE) {
+        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= LOW) {
             wristTarget=FRONT;
         }
 
