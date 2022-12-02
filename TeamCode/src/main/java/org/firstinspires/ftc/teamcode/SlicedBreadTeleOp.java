@@ -72,13 +72,13 @@ public class SlicedBreadTeleOp extends OpMode
     final int HIGH = 2900;
     final int MEDIUM = 2100;
     final int LOW = 1250;
-    final int DRIVE = 300;
-    final int PICKUP = 125;
+    final int DRIVE = 0;
+    final int PICKUP = 100;
 
     final double CLOSED = 1.0;
     final double OPEN = 0;
-    final double FRONT = 1.0;
-    final double BACK = 0;
+    final double FRONT = 0;
+    final double BACK = 1.0;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
@@ -172,17 +172,17 @@ public class SlicedBreadTeleOp extends OpMode
         }
 
         // Front
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget >= LOW) {
+        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE) {
             wristTarget=BACK;
         }
 
         // Back
-        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= LOW) {
+        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
             wristTarget=FRONT;
         }
 
         // Middle
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= DRIVE) {
+        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
             wristTarget=0.5;
         }
 
@@ -205,9 +205,9 @@ public class SlicedBreadTeleOp extends OpMode
             intakeTarget = OPEN;
             intakeState = 2;
         } else if (intakeState==2) {    // lower to position
-            lift.moveAbsolute(70);
-            liftTarget=PICKUP;
-            if (lift.getCurrentPosition() < PICKUP) {
+            //lift.moveAbsolute(70);
+            liftTarget=DRIVE;
+            if (lift.getCurrentPosition() < DRIVE+10) {
                 intakeState = 3;
             }
         } else if (intakeState==3) {    // close grip
@@ -226,14 +226,14 @@ public class SlicedBreadTeleOp extends OpMode
             // check if we are in low position
             // if yes, move down before ejecting
             // if no, eject
-            if (liftTarget==DRIVE) {
-                liftTarget = PICKUP;               // go to bottom
-                intakeState = -2;
-            } else {
+            //if (liftTarget==DRIVE) {
+                //liftTarget = PICKUP;               // go to bottom
+                //intakeState = -2;
+            //} else {
                 intake.moveAbsolute(OPEN);
                 intakeState = 0;
                 intakeTarget = OPEN;
-            }
+           // }
         } else if (intakeState==-2) {        // 2nd stage of low eject
             intake.moveAbsolute(OPEN);     // open intake
             intakeTarget=OPEN;
