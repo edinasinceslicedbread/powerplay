@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,30 +19,30 @@ public class LiftTool {
         lift.setTargetPosition(0);
 
         // Initialize the PID variables
-        lift.setPositionCoefficient(0.05);
-
-        // Reset the encoders and set tolerance
-        lift.set(0);
+        lift.setPositionCoefficient(0.02);
         lift.setPositionTolerance(13.6);
+
+        lift.set(0);
 
     }
 
     public void moveAbsolute(int target) {
 
         // Set some guardrails
-        target = MathUtils.clamp(target, 0, 4500);
+        target = MathUtils.clamp(target, 0, 2900);
 
         lift.setTargetPosition(target);
-        if(lift.getCurrentPosition() > target) {
-            lift.set(.05);
-        } else {
-            lift.set(.2);
-        }
+
+        ElevatorFeedforward feedforward = new ElevatorFeedforward(
+                .2, .2, .1, 0
+        );
+
+        lift.set(feedforward.calculate(.01,.01));
 
     }
 
     public void moveMaxRange() {
-        moveAbsolute(3000);
+        moveAbsolute(2900);
     }
 
     public void moveMinRange() {

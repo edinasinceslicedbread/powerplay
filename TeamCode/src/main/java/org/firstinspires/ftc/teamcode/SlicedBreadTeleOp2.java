@@ -73,7 +73,6 @@ public class SlicedBreadTeleOp2 extends OpMode
     final int MEDIUM = 2100;
     final int LOW = 1250;
     final int DRIVE = 0;
-    final int PICKUP = 100;
     final int LIFT_INCREMENT = 50;
 
     final double CLOSED = 1.0;
@@ -230,9 +229,9 @@ public class SlicedBreadTeleOp2 extends OpMode
             );
         } else {
             drive.driveFieldCentric(
-                    driverOp.getLeftX() * turbo,
-                    driverOp.getLeftY() * turbo,
-                    driverOp.getRightX() * turbo,
+                    Math.pow(driverOp.getLeftX(),3) * turbo,
+                    Math.pow(driverOp.getLeftY(),3) * turbo,
+                    Math.pow(driverOp.getRightX(),3) * (turbo/2),
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                     false
             );
