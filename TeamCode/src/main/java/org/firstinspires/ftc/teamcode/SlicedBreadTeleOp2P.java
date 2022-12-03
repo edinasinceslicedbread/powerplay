@@ -34,10 +34,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.arcrobotics.ftclib.util.MathUtils;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -53,8 +53,8 @@ import com.arcrobotics.ftclib.util.MathUtils;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SlicedBread TeleOp TWO", group="Iterative Opmode")
-public class SlicedBreadTeleOp2 extends OpMode
+@TeleOp(name="SlicedBread TeleOp 2P", group="Iterative Opmode")
+public class SlicedBreadTeleOp2P extends OpMode
 {
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
@@ -68,8 +68,8 @@ public class SlicedBreadTeleOp2 extends OpMode
     private double intakeTarget,wristTarget;
 
     private double turbo = 0.5;
-    private final double TURBO_INCREMENT = 0.1;
     private final double LIMIT_RAMP= .75;
+    private double speed_limit = 1.0;
 
     final int HIGH = 2900;
     final int MEDIUM = 2100;
@@ -152,91 +152,78 @@ public class SlicedBreadTeleOp2 extends OpMode
     public void loop() {
 
         // Full Height
-        if (driverOp.getButton(GamepadKeys.Button.Y)) {
+        if (toolOp.getButton(GamepadKeys.Button.Y)) {
             liftTarget = HIGH;
         }
 
         // Mid Height
-        if (driverOp.getButton(GamepadKeys.Button.X)) {
+        if (toolOp.getButton(GamepadKeys.Button.X)) {
             liftTarget = MEDIUM;
         }
 
         // Short Height
-        if (driverOp.getButton(GamepadKeys.Button.B)) {
+        if (toolOp.getButton(GamepadKeys.Button.B)) {
             liftTarget = LOW;
         }
 
         // Bottom
-        if (driverOp.getButton(GamepadKeys.Button.A)) {
+        if (toolOp.getButton(GamepadKeys.Button.A)) {
             liftTarget = DRIVE;
         }
 
         driverOp.readButtons();
+        toolOp.readButtons();
 
-        // Bump up
-        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
-            liftTarget = (liftTarget + LIFT_INCREMENT > HIGH) ? HIGH : liftTarget + LIFT_INCREMENT;
-        }
-
-        // Bump down
-        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
-            liftTarget = (liftTarget - LIFT_INCREMENT < 0) ? 0 : liftTarget - LIFT_INCREMENT;
-        }
-
-        // Turbo up
-        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_RIGHT)) {
-            turbo = (turbo + TURBO_INCREMENT > 1.0) ? 1.0 : turbo + TURBO_INCREMENT;
-        }
-
-        // Turbo down
-        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_LEFT)) {
-            turbo = (turbo - TURBO_INCREMENT < 0) ? 0 : turbo - TURBO_INCREMENT;
-        }
-
-        // Front
-        if (driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE) {
-            wristTarget = BACK;
-        }
-
-        // Back
-        if (driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
-            wristTarget = FRONT;
+        // Back and Front Toggle Wrist
+        if (toolOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + 100) {
+            wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
         }
 
         // Middle
-        if (driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
+        if (toolOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE + 100) {
             wristTarget = SIDE;
         }
 
         // Eject
-        if (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 1) {
+        if (toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 1) {
             intakeTarget = OPEN;
         }
 
         // Intake
-        if (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) == 1) {
+        if (toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) == 1) {
             intakeTarget = CLOSED;
         }
 
+        // Manually adjusts lift
+        liftTarget = liftTarget + (int)(toolOp.getLeftX()*50);
+        liftTarget = MathUtils.clamp(liftTarget, DRIVE, HIGH);
+
+        // move the tool parts
         lift.moveAbsolute(liftTarget);
         intake.moveAbsolute(intakeTarget);
         wrist.moveAbsolute(wristTarget);
+
+        // calculate drive parameters
+        turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
+        speed_limit = 1-((liftTarget/HIGH) * LIMIT_RAMP);
+        drive.setRange(-speed_limit, speed_limit);
 
         if (!FIELD_CENTRIC) {
             drive.driveRobotCentric(
                     driverOp.getLeftX() * turbo,
                     driverOp.getLeftY() * turbo,
                     driverOp.getRightX() * (turbo/2),
-                    false
+                    true
             );
         } else {
             drive.driveFieldCentric(
-                    MathUtils.clamp(driverOp.getLeftX() * turbo, 0, 1-((liftTarget/HIGH) * LIMIT_RAMP)),
-                    MathUtils.clamp(driverOp.getLeftY() * turbo,0, 1-((liftTarget/HIGH) * LIMIT_RAMP)),
-                    MathUtils.clamp(driverOp.getRightX() * (turbo/2), 0, 1-((liftTarget/HIGH) * LIMIT_RAMP)),
+                    driverOp.getLeftX() * turbo,
+                    driverOp.getLeftY() * turbo,
+                   driverOp.getRightX() * (turbo/2),
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
-                    false
+                    true
             );
+
         }
 
         // Show the elapsed game time and wheel power.
