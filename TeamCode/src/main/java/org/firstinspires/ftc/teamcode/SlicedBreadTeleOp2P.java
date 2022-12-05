@@ -67,17 +67,17 @@ public class SlicedBreadTeleOp2P extends OpMode
     private int liftTarget;
     private double intakeTarget,wristTarget;
 
-    private double turbo = 0.5;
-    private final double LIMIT_RAMP= .75;
+    double turbo = 0.5;
     private double speed_limit = 1.0;
 
     final int HIGH = 2900;
     final int MEDIUM = 2100;
     final int LOW = 1250;
     final int DRIVE = 0;
+    final int MIN_WRIST = 350;
     final int LIFT_INCREMENT = 50;
 
-    final double CLOSED = 1.0;
+    final double CLOSED = .75;
     final double OPEN = 0;
     final double FRONT = 0;
     final double SIDE = 0.5;
@@ -175,7 +175,7 @@ public class SlicedBreadTeleOp2P extends OpMode
         toolOp.readButtons();
 
         // Back and Front Toggle Wrist
-        if (toolOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + 100) {
+        if (toolOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + MIN_WRIST) {
             wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
         }
 
@@ -195,7 +195,7 @@ public class SlicedBreadTeleOp2P extends OpMode
         }
 
         // Manually adjusts lift
-        liftTarget = liftTarget + (int)(toolOp.getLeftX()*50);
+        liftTarget = liftTarget + (int)(toolOp.getLeftX()*LIFT_INCREMENT);
         liftTarget = MathUtils.clamp(liftTarget, DRIVE, HIGH);
 
         // move the tool parts
@@ -205,21 +205,22 @@ public class SlicedBreadTeleOp2P extends OpMode
 
         // calculate drive parameters
         turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
-        speed_limit = 1-((liftTarget/HIGH) * LIMIT_RAMP);
+        double LIMIT_RAMP = .75;
+        speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
         drive.setRange(-speed_limit, speed_limit);
 
         if (!FIELD_CENTRIC) {
             drive.driveRobotCentric(
                     driverOp.getLeftX() * turbo,
                     driverOp.getLeftY() * turbo,
-                    driverOp.getRightX() * (turbo/2),
-                    true
+                    driverOp.getRightX() * turbo,
+                    false
             );
         } else {
             drive.driveFieldCentric(
                     driverOp.getLeftX() * turbo,
                     driverOp.getLeftY() * turbo,
-                   driverOp.getRightX() * (turbo/2),
+                   driverOp.getRightX() * turbo,
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                     true
             );
@@ -227,8 +228,10 @@ public class SlicedBreadTeleOp2P extends OpMode
         }
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Speed", "Turbo Factor:" + turbo);
+        telemetry.addData("Status", "Run Time: " + runtime);
+        telemetry.addData("Speed", "Turbo Factor: " + turbo);
+        telemetry.addData("Speed Limit", "Speed Limit: " +speed_limit);
+        telemetry.addData("Lift Height", "Lift Height: "+liftTarget);
     }
 
     /*
