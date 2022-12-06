@@ -52,32 +52,41 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SlicedBread TeleOp", group="Iterative Opmode")
-public class SlicedBreadTeleOp extends OpMode
+@TeleOp(name="SlicedBread TeleOp TWO", group="Iterative Opmode")
+public class SlicedBreadTeleOp1P extends OpMode
 {
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive drive = null;
     private RevIMU imu = null;
-    private GamepadEx driverOp, toolOp = null;
+    private GamepadEx driverOp = null;
     private LiftTool lift = null;
     private WristTool wrist = null;
     private IntakeTool intake = null;
     private int liftTarget;
     private double intakeTarget,wristTarget;
 
-    private final double turbo = 0.50;
-    private int intakeState = 0;
+    // drive constants
+    private double turbo = 0.5;
+    private double speed_limit = 1.0;
+    private final double TURBO_INCREMENT = 0.1;
+    private final double LIMIT_RAMP= .75;
 
+    // lift constants
     final int HIGH = 2900;
     final int MEDIUM = 2100;
     final int LOW = 1250;
+    final int MIN_WRIST = 350;
     final int DRIVE = 0;
-    final int PICKUP = 100;
+    final int LIFT_INCREMENT = 50;
 
-    final double CLOSED = 1.0;
+    // intake constants
+    final double CLOSED = .75;
     final double OPEN = 0;
+
+    // wrist constants
     final double FRONT = 0;
+    final double SIDE = 0.5;
     final double BACK = 1.0;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
@@ -105,7 +114,7 @@ public class SlicedBreadTeleOp extends OpMode
 
         // the extended gamepad object
         driverOp = new GamepadEx(gamepad1);
-        toolOp = new GamepadEx(gamepad2);
+
         // init Lift
         lift = new LiftTool();
         lift.init(hardwareMap);
@@ -120,7 +129,7 @@ public class SlicedBreadTeleOp extends OpMode
         intake = new IntakeTool();
         intake.init(hardwareMap);
         intake.moveAbsolute(OPEN);
-        intakeTarget = 0;
+        intakeTarget = OPEN;
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -148,122 +157,101 @@ public class SlicedBreadTeleOp extends OpMode
     public void loop() {
 
         // Full Height
-        if(driverOp.getButton(GamepadKeys.Button.Y)) {
-            liftTarget=HIGH;
-            intakeState=0;
+        if (driverOp.getButton(GamepadKeys.Button.Y)) {
+            liftTarget = HIGH;
         }
 
         // Mid Height
-        if(driverOp.getButton(GamepadKeys.Button.X)) {
-            liftTarget=MEDIUM;
-            intakeState=0;
+        if (driverOp.getButton(GamepadKeys.Button.X)) {
+            liftTarget = MEDIUM;
         }
 
         // Short Height
-        if(driverOp.getButton(GamepadKeys.Button.B)) {
-            liftTarget=LOW;
-            intakeState=0;
+        if (driverOp.getButton(GamepadKeys.Button.B)) {
+            liftTarget = LOW;
         }
 
         // Bottom
-        if(driverOp.getButton(GamepadKeys.Button.A)) {
-            liftTarget=DRIVE;
-            intakeState=0;
+        if (driverOp.getButton(GamepadKeys.Button.A)) {
+            liftTarget = DRIVE;
+        }
+
+        driverOp.readButtons();
+
+        // Bump up
+        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+            liftTarget = Math.min(HIGH, liftTarget + LIFT_INCREMENT);
+        }
+
+        // Bump down
+        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
+            liftTarget = Math.max(0, liftTarget - LIFT_INCREMENT);
+        }
+
+        // Turbo up
+        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_RIGHT)) {
+            turbo = Math.min(1.0, turbo + TURBO_INCREMENT);
+        }
+
+        // Turbo down
+        if (driverOp.wasJustReleased(GamepadKeys.Button.DPAD_LEFT)) {
+            turbo = Math.min(0, turbo - TURBO_INCREMENT);
         }
 
         // Front
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE) {
-            wristTarget=BACK;
+        if (driverOp.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) && liftTarget >= MIN_WRIST) {
+            wristTarget = BACK;
         }
 
         // Back
-        if(driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
-            wristTarget=FRONT;
+        if (driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= MIN_WRIST) {
+            wristTarget = FRONT;
         }
 
         // Middle
-        if(driverOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE) {
-            wristTarget=0.5;
+        if (driverOp.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) && driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget >= MIN_WRIST) {
+            wristTarget = SIDE;
         }
 
         // Eject
-        if(driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)==1) {
-            intakeState=-1;
+        if (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 1) {
+            intakeTarget = OPEN;
         }
 
         // Intake
-        if(driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)==1 && liftTarget <= LOW) {
-            intakeState=1;
-        }
-
-        if (intakeState==0) {           // normal operation
-            lift.moveAbsolute(liftTarget);
-            intake.moveAbsolute(intakeTarget);
-        } else if (intakeState==1) {    // open the grip
-            intake.moveAbsolute(OPEN);
-
-            intakeTarget = OPEN;
-            intakeState = 2;
-        } else if (intakeState==2) {    // lower to position
-            //lift.moveAbsolute(70);
-            liftTarget=DRIVE;
-            if (lift.getCurrentPosition() < DRIVE+10) {
-                intakeState = 3;
-            }
-        } else if (intakeState==3) {    // close grip
-            intake.moveAbsolute(CLOSED);
+        if (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) == 1) {
             intakeTarget = CLOSED;
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                intakeState=0;
-            }
-            intakeState=4;
-        } else if (intakeState==4) {        // safe drive height
-            liftTarget = DRIVE;
-            intakeState = 0;
-        } else if (intakeState==-1) {       // Ejecting
-            // check if we are in low position
-            // if yes, move down before ejecting
-            // if no, eject
-            //if (liftTarget==DRIVE) {
-                //liftTarget = PICKUP;               // go to bottom
-                //intakeState = -2;
-            //} else {
-                intake.moveAbsolute(OPEN);
-                intakeState = 0;
-                intakeTarget = OPEN;
-           // }
-        } else if (intakeState==-2) {        // 2nd stage of low eject
-            intake.moveAbsolute(OPEN);     // open intake
-            intakeTarget=OPEN;
-            intakeState = -3;
-        } else if (intakeState==-3) {       // Last step - go back to drive height
-            liftTarget=DRIVE;
-            intakeState = 0;
         }
 
+        lift.moveAbsolute(liftTarget);
+        intake.moveAbsolute(intakeTarget);
         wrist.moveAbsolute(wristTarget);
+
+        speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
+        drive.setRange(-speed_limit, speed_limit);
 
         if (!FIELD_CENTRIC) {
             drive.driveRobotCentric(
-                    driverOp.getLeftX()*turbo,
-                    driverOp.getLeftY()*turbo,
-                    driverOp.getRightX()*turbo,
+                    driverOp.getLeftX() * turbo,
+                    driverOp.getLeftY() * turbo,
+                    driverOp.getRightX() * turbo,
                     false
             );
         } else {
             drive.driveFieldCentric(
-                    driverOp.getLeftX()*turbo,
-                    driverOp.getLeftY()*turbo,
-                    driverOp.getRightX()*turbo,
+                    driverOp.getLeftX() * turbo,
+                    driverOp.getLeftY() * turbo,
+                    driverOp.getRightX() * turbo,
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
-                    false
+                    true
             );
         }
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + runtime);
+        telemetry.addData("Speed", "Turbo Factor: " + turbo);
+        telemetry.addData("Speed Limit", "Speed Limit: " + speed_limit);
+        telemetry.addData("Lift Height", "Lift Height: "+ liftTarget);
     }
 
     /*
@@ -271,6 +259,6 @@ public class SlicedBreadTeleOp extends OpMode
      */
     @Override
     public void stop() {
-        lift.moveAbsolute(20);
+        lift.moveAbsolute(0);
     }
 }

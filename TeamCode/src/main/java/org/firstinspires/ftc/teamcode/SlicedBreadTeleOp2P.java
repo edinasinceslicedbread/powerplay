@@ -67,9 +67,12 @@ public class SlicedBreadTeleOp2P extends OpMode
     private int liftTarget;
     private double intakeTarget,wristTarget;
 
+    // drive constants
     double turbo = 0.5;
     private double speed_limit = 1.0;
+    double LIMIT_RAMP = .75;
 
+    // lift constants
     final int HIGH = 2900;
     final int MEDIUM = 2100;
     final int LOW = 1250;
@@ -77,8 +80,11 @@ public class SlicedBreadTeleOp2P extends OpMode
     final int MIN_WRIST = 350;
     final int LIFT_INCREMENT = 50;
 
+    // intake constants
     final double CLOSED = .75;
     final double OPEN = 0;
+
+    // wrist constants
     final double FRONT = 0;
     final double SIDE = 0.5;
     final double BACK = 1.0;
@@ -205,7 +211,6 @@ public class SlicedBreadTeleOp2P extends OpMode
 
         // calculate drive parameters
         turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
-        double LIMIT_RAMP = .75;
         speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
         drive.setRange(-speed_limit, speed_limit);
 
@@ -224,7 +229,6 @@ public class SlicedBreadTeleOp2P extends OpMode
                     imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                     true
             );
-
         }
 
         // Show the elapsed game time and wheel power.
