@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -66,6 +63,10 @@ public class SlicedBreadAuto extends LinearOpMode {
     final int HIGH = 2900;
     final int DRIVE = 300;
 
+    final double FRONT = 0;
+    final double SIDE = 0.5;
+    final double BACK = 1.0
+
     final double ZONE_ONE = 49;
     final double ZONE_TWO = 25;
     final double ZONE_THREE = 0.01;
@@ -77,7 +78,7 @@ public class SlicedBreadAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // Game initialization
-        float x,y,degrees;
+        double x,y,degrees;
         double parkZone = ZONE_TWO; // Set this variable when we read the AprilTag
         boolean menuFlag = false;
 
@@ -136,6 +137,7 @@ public class SlicedBreadAuto extends LinearOpMode {
 
         waitForStart();
 
+        /*
         x = 0;
         y = 0;
         degrees = 0;
@@ -145,6 +147,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                 .strafeLeft(6)
                 .build();
         drive.followTrajectorySequence(trajSeq0);
+         */
 
         while (opModeIsActive() && !tagFound) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
@@ -227,7 +230,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                             lift.setPower(1);
                         })
                         .waitSeconds(2)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
@@ -239,7 +242,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(1)
                         .turn(Math.toRadians(-45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Blue Left
@@ -260,7 +263,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                             lift.setPower(1);
                         })
                         .waitSeconds(2)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
@@ -273,19 +276,19 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .waitSeconds(1)
                         .strafeLeft(1.5)
                         .turn(Math.toRadians(45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .strafeLeft(parkZone)
                         .build();
             }
         } else {  // Red Alliance
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
-                x = 30;
+                x = 32;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeLeft(18)
+                        .strafeTo(new Vector2d(12, -64))
                         .lineTo(new Vector2d(12,-36))
                         .turn(Math.toRadians(45))
                         .addTemporalMarker(() -> {
@@ -294,7 +297,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                             lift.setPower(1);
                         })
                         .waitSeconds(2)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
@@ -306,7 +309,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         })
                         .waitSeconds(1)
                         .turn(Math.toRadians(-45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .waitSeconds(1)
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
@@ -327,7 +330,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                             lift.setPower(1);
                         })
                         .waitSeconds(2)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(2)
@@ -340,7 +343,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         .waitSeconds(1)
                         .strafeLeft(1.5)
                         .turn(Math.toRadians(45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(1))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .waitSeconds(1)
                         .strafeLeft(parkZone)
                         .build();
