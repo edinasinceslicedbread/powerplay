@@ -68,7 +68,7 @@ public class SlicedBreadTeleOp2P extends OpMode
     private double intakeTarget,wristTarget;
 
     // drive constants
-    double turbo = 0.5;
+    double turbo = 0.6;
     private double speed_limit = 1.0;
     double LIMIT_RAMP = .75;
 
@@ -78,16 +78,16 @@ public class SlicedBreadTeleOp2P extends OpMode
     final int LOW = 1250;
     final int DRIVE = 0;
     final int MIN_WRIST = 350;
-    final int LIFT_INCREMENT = 50;
+    final int LIFT_INCREMENT = 10;
 
     // intake constants
     final double CLOSED = .75;
     final double OPEN = 0;
 
     // wrist constants
-    final double FRONT = 0;
-    final double SIDE = 0.5;
-    final double BACK = 1.0;
+    final double FRONT = 0.03;
+    final double SIDE = 0.53;
+    final double BACK = 1.03  ;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
@@ -200,8 +200,10 @@ public class SlicedBreadTeleOp2P extends OpMode
             intakeTarget = CLOSED;
         }
 
+
+
         // Manually adjusts lift
-        liftTarget = liftTarget + (int)(toolOp.getLeftX()*LIFT_INCREMENT);
+        liftTarget = liftTarget + (int)(toolOp.getLeftY()*LIFT_INCREMENT);
         liftTarget = MathUtils.clamp(liftTarget, DRIVE, HIGH);
 
         // move the tool parts

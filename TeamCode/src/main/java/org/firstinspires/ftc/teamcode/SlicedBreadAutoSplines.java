@@ -214,70 +214,63 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
 
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
-                x = -30;
+                x = -32;
                 y = 64;
                 degrees = -90;
-
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeLeft(18)
-                        .lineTo(new Vector2d(-12,36))
-                        .turn(Math.toRadians(45))
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(1)
+                        .lineTo(new Vector2d(-16, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(-6.5,31, Math.toRadians(-45)), Math.toRadians(-90))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(8)
+                        .waitSeconds(1)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .turn(Math.toRadians(-45))
+                        .lineToSplineHeading(new Pose2d(-12,36, Math.toRadians(-90)))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
+
             } else {  // Blue Left
-                x = 42;
+                x = 32;
                 y = 64;
                 degrees = -90;
-
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeRight(30)
-                        .lineTo(new Vector2d(12,36))
-                        .turn(Math.toRadians(-45))
-                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(1)
+                        .lineTo(new Vector2d(16, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(6.5,31, Math.toRadians(-135)), Math.toRadians(-135))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(7)
+                        .waitSeconds(1)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .strafeLeft(1.5)
-                        .turn(Math.toRadians(45))
+                        .lineToSplineHeading(new Pose2d(12,36, Math.toRadians(-90)))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .strafeLeft(parkZone)
+                        .waitSeconds(1)
+                        .strafeLeft(parkZone) // flip it!
                         .build();
             }
         } else {  // Red Alliance
@@ -311,39 +304,35 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Red Left
-                x = -42;
+                x = -32;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeRight(30)
-                        .lineTo(new Vector2d(-12,-36))
-                        .turn(Math.toRadians(-45))
-                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(1)
+                        .lineTo(new Vector2d(-16, -60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(-6.5,-31, Math.toRadians(45)), Math.toRadians(45))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(7)
+                        .waitSeconds(1)
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .strafeLeft(1.5)
-                        .turn(Math.toRadians(45))
+                        .lineToSplineHeading(new Pose2d(-12,-36, Math.toRadians(90)))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .waitSeconds(1)
-                        .strafeLeft(parkZone)
+                        .strafeLeft(parkZone) // flip it!
                         .build();
+
             }
         }
 
