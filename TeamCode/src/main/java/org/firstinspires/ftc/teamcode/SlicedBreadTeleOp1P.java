@@ -85,9 +85,9 @@ public class SlicedBreadTeleOp1P extends OpMode
     final double OPEN = 0;
 
     // wrist constants
-    final double FRONT = 0;
+    final double FRONT = 0.03;
     final double SIDE = 0.5;
-    final double BACK = 1.0;
+    final double BACK = 1.05;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;

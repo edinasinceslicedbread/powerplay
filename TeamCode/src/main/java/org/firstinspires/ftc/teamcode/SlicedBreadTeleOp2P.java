@@ -181,12 +181,12 @@ public class SlicedBreadTeleOp2P extends OpMode
         toolOp.readButtons();
 
         // Back and Front Toggle Wrist
-        if (toolOp.getButton(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + MIN_WRIST) {
+        if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + MIN_WRIST) {
             wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
         }
 
         // Middle
-        if (toolOp.getButton(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE + 100) {
+        if (toolOp.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE + 100) {
             wristTarget = SIDE;
         }
 
