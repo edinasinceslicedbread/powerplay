@@ -1,29 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
-
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
-import org.firstinspires.ftc.teamcode.AutonomousOptions;
 
 import java.util.ArrayList;
 
-@Autonomous(name="SlicedBreadAutoSplines", group="Autonomous")
-public class SlicedBreadAutoSplines extends LinearOpMode {
+@Autonomous(name="SlicedBreadAutoDELUXE", group="Autonomous")
+public class SlicedBreadAutoSplinesDELUXE extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
@@ -46,10 +42,10 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
     double cx = 480;
     double cy = 620;
 
-    final double RIGHT_DROPX = 8.0;
-    final double RIGHT_DROPY = 30.5;
-    final double LEFT_DROPX = 6.25;
-    final double LEFT_DROPY = 31.75;
+    final double RIGHT_DROPX = 7.75;
+    final double RIGHT_DROPY = 30.25;
+    final double LEFT_DROPX = 7.75;
+    final double LEFT_DROPY = 30.25;
 
     // UNITS ARE METERS
     double tagsize = 0.0444;
@@ -65,7 +61,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
     final double OPEN = 0;
     final double CLOSED = 1;
 
-    final int HIGH = 2825;
+    final int HIGH = 2900;
     final int DRIVE = 0;
 
     final double FRONT = 0.03;
@@ -227,13 +223,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .lineTo(new Vector2d(-16, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
@@ -257,7 +246,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         .build();
 
             } else {  // Blue Left
-                x = 41.25;
+                x = 32;
                 y = 64;
                 degrees = -90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
@@ -265,13 +254,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .lineTo(new Vector2d(16, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
@@ -304,13 +286,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .lineTo(new Vector2d(16, -60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
@@ -319,7 +294,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         })
                         .splineToLinearHeading(new Pose2d(RIGHT_DROPX, -RIGHT_DROPY, Math.toRadians(135)), Math.toRadians(90))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .waitSeconds(1)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(1)
                         .lineToSplineHeading(new Pose2d(12,-36, Math.toRadians(90)))
@@ -334,7 +308,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Red Left
-                x = -41.25;
+                x = -32;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
@@ -342,13 +316,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .lineTo(new Vector2d(-16, -60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
