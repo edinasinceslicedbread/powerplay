@@ -47,7 +47,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
     double cy = 620;
 
     final double RIGHT_DROPX = 8.0;
-    final double RIGHT_DROPY = 30.5;
+    final double RIGHT_DROPY = 30.0;
     final double LEFT_DROPX = 6.25;
     final double LEFT_DROPY = 31.75;
 
