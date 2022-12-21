@@ -53,8 +53,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SlicedBread TeleOp 2P", group="Iterative Opmode")
-public class SlicedBreadTeleOp2P extends OpMode
+@TeleOp(name="SlicedBread TeleOp Regular Season", group="Iterative Opmode")
+public class SlicedBreadTeleOp2PRegSeason extends OpMode
 {
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
@@ -64,7 +64,7 @@ public class SlicedBreadTeleOp2P extends OpMode
     private LiftTool lift = null;
     private WristTool wrist = null;
     private IntakeTool intake = null;
-    private int liftTarget,liftStartPos;
+    private int liftTarget;
     private double intakeTarget,wristTarget;
 
     // drive constants
@@ -85,13 +85,9 @@ public class SlicedBreadTeleOp2P extends OpMode
     final double OPEN = 0;
 
     // wrist constants
-    double wristEndTime;
-    double WRIST_DELAY=1000;
-
     final double FRONT = 0.03;
-    final double BACK = 1.03;
-
-    WristState wristState;
+    final double SIDE = 0.53;
+    final double BACK = 1.03  ;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
@@ -185,14 +181,13 @@ public class SlicedBreadTeleOp2P extends OpMode
         toolOp.readButtons();
 
         // Back and Front Toggle Wrist
-        if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
-            if (liftTarget > DRIVE + MIN_WRIST) {                   // Lift is in a safe position for wrist flip
-                wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
-                wristState = WristState.NORMAL;
-            } else {    // Lift is unsafe, lift and flip and drop
-                liftStartPos = liftTarget;
-                wristState = WristState.LIFT;
-            }
+        if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER) && liftTarget > DRIVE + MIN_WRIST) {
+            wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
+        }
+
+        // Middle
+        if (toolOp.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) && liftTarget > DRIVE + 100) {
+            wristTarget = SIDE;
         }
 
         // Eject
@@ -214,31 +209,7 @@ public class SlicedBreadTeleOp2P extends OpMode
         // move the tool parts
         lift.moveAbsolute(liftTarget);
         intake.moveAbsolute(intakeTarget);
-
-        switch(wristState) {
-            case NORMAL:
-                wrist.moveAbsolute(wristTarget);
-                break;
-            case LIFT:
-                liftTarget = MIN_WRIST;
-                if (lift.getCurrentPosition()==MIN_WRIST) {
-                    wristState = WristState.FLIP;
-                    wristEndTime = System.nanoTime() + 1E6 * WRIST_DELAY;
-                }
-                break;
-            case FLIP:
-                wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
-                if (System.nanoTime() == wristEndTime) {
-                    wristState = WristState.DROP;
-                }
-                break;
-            case DROP:
-                liftTarget = liftStartPos;
-                if(lift.getCurrentPosition()==liftTarget) {
-                    wristState = WristState.NORMAL;
-                }
-                break;
-        }
+        wrist.moveAbsolute(wristTarget);
 
         // calculate drive parameters
         turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
