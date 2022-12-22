@@ -69,6 +69,7 @@ public class SlicedBreadTeleOp2P extends OpMode
 
     // drive constants
     double turbo = 0.6;
+    final double TURBO_BASE = 0.6;
     private double speed_limit = 1.0;
     double LIMIT_RAMP = .75;
 
@@ -240,7 +241,7 @@ public class SlicedBreadTeleOp2P extends OpMode
         }
 
         // calculate drive parameters
-        turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
+        turbo = TURBO_BASE + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
         speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
         drive.setRange(-speed_limit, speed_limit);
 
