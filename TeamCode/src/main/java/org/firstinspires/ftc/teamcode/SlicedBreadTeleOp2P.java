@@ -86,12 +86,12 @@ public class SlicedBreadTeleOp2P extends OpMode
 
     // wrist constants
     double wristEndTime;
-    double WRIST_DELAY=1000;
+    double WRIST_DELAY=750;
 
     final double FRONT = 0.03;
     final double BACK = 1.03;
 
-    WristState wristState;
+    WristState wristState = WristState.NORMAL;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
     static final boolean FIELD_CENTRIC = true;
@@ -186,8 +186,8 @@ public class SlicedBreadTeleOp2P extends OpMode
 
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+            wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
             if (liftTarget > DRIVE + MIN_WRIST) {                   // Lift is in a safe position for wrist flip
-                wristTarget = (wristTarget == FRONT) ? BACK : FRONT; //Go to the front if anywhere but front - otherwise back
                 wristState = WristState.NORMAL;
             } else {    // Lift is unsafe, lift and flip and drop
                 liftStartPos = liftTarget;
@@ -205,8 +205,6 @@ public class SlicedBreadTeleOp2P extends OpMode
             intakeTarget = CLOSED;
         }
 
-
-
         // Manually adjusts lift
         liftTarget = liftTarget + (int)(toolOp.getLeftY()*LIFT_INCREMENT);
         liftTarget = MathUtils.clamp(liftTarget, DRIVE, HIGH);
@@ -221,15 +219,16 @@ public class SlicedBreadTeleOp2P extends OpMode
                 break;
             case LIFT:
                 liftTarget = MIN_WRIST;
-                if (lift.getCurrentPosition()==MIN_WRIST) {
+                if (lift.getCurrentPosition()>=MIN_WRIST) {
                     wristState = WristState.FLIP;
                     wristEndTime = System.nanoTime() + 1E6 * WRIST_DELAY;
                 }
                 break;
             case FLIP:
-                wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
-                if (System.nanoTime() == wristEndTime) {
+                if (System.nanoTime() > wristEndTime) {
                     wristState = WristState.DROP;
+                } else {
+                    wrist.moveAbsolute(wristTarget);
                 }
                 break;
             case DROP:
@@ -266,7 +265,8 @@ public class SlicedBreadTeleOp2P extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Speed", "Turbo Factor: " + turbo);
         telemetry.addData("Speed Limit", "Speed Limit: " +speed_limit);
-        telemetry.addData("Lift Height", "Lift Height: "+liftTarget);
+        telemetry.addData("Lift Target", "Lift Target: "+liftTarget);
+        telemetry.addData("Lift Height", "Lift Height:"+lift.getCurrentPosition());
     }
 
     /*

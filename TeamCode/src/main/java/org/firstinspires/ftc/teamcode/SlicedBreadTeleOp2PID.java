@@ -29,7 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -39,11 +43,13 @@ import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  */
 
+@Config
 @TeleOp(name="SlicedBread TeleOp 2PID", group="Testing")
 public class SlicedBreadTeleOp2PID extends OpMode
 {
@@ -60,7 +66,7 @@ public class SlicedBreadTeleOp2PID extends OpMode
     public static double p = 0, i = 0, d = 0;
     public static double f = 0;
 
-    public final double ticks_in_degrees = 384.5/180;
+    private final double ticks_in_degrees = 384.5/180;
 
     private int liftTarget,liftStartPos;
     private double intakeTarget,wristTarget;
@@ -100,7 +106,7 @@ public class SlicedBreadTeleOp2PID extends OpMode
         telemetry.addData("Status", "Initialized");
 
         controller = new PIDFController(p, i, d, f);
-
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -124,6 +130,7 @@ public class SlicedBreadTeleOp2PID extends OpMode
         //lift.init(hardwareMap);
 
         lift = hardwareMap.get(DcMotorEx.class, "lift");
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
         liftTarget = DRIVE;
 
         // init Wrist
@@ -165,7 +172,11 @@ public class SlicedBreadTeleOp2PID extends OpMode
         controller.setPIDF(p, i, d, f);
         int liftPos = lift.getCurrentPosition();
         double pid = controller.calculate(liftPos, liftTarget);
-        double ff = Math.cos(Math.toRadians(liftTarget/ticks_in_degrees)) * f;
+        //double ff = Math.cos(Math.toRadians(liftTarget/ticks_in_degrees)) * f;
+        ElevatorFeedforward feedforward = new ElevatorFeedforward(
+                .2, .2, .1, 0
+        );
+        double ff = feedforward.calculate(.01,.01);
         double power = pid + ff;
 
         // Full Height
@@ -222,6 +233,7 @@ public class SlicedBreadTeleOp2PID extends OpMode
 
         intake.moveAbsolute(intakeTarget);
 
+        /*
         switch(wristState) {
             case NORMAL:
                 wrist.moveAbsolute(wristTarget);
@@ -246,6 +258,7 @@ public class SlicedBreadTeleOp2PID extends OpMode
                 }
                 break;
         }
+         */
 
         // calculate drive parameters
         turbo = 0.5 + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);

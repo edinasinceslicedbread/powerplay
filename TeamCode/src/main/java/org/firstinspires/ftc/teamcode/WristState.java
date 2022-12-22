@@ -4,5 +4,5 @@ enum WristState {
     NORMAL,
     LIFT,
     FLIP,
-    DROP
+    DROP;
 }

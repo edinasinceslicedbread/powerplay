@@ -37,7 +37,7 @@ public class LiftTool {
                 .2, .2, .1, 0
         );
 
-        lift.set(feedforward.calculate(.01,.01));
+        lift.set(feedforward.calculate(.1,.05));
 
     }
 

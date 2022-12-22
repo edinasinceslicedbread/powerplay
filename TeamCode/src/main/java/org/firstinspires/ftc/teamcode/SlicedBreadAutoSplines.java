@@ -105,6 +105,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
 
+        telemetry.speak("Hello, My Name is Brad!");
         while (!menuFlag && !isStarted()) {
             menuFlag = autonomousConfiguration.init_loop();
             telemetry.update();
