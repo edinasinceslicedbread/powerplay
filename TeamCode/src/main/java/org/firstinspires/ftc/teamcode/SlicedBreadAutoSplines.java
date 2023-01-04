@@ -97,30 +97,12 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
         // init lift
         DcMotor lift = hardwareMap.dcMotor.get("lift");
 
+        // set up lift
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // init Drive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
-
-        telemetry.speak("Hello, My Name is Brad!");
-        while (!menuFlag && !isStarted()) {
-            menuFlag = autonomousConfiguration.init_loop();
-            telemetry.update();
-        }
-
-        if (!autonomousConfiguration.getReadyToStart()) {
-            telemetry.addData("Alert", "Not ready to start!");
-            telemetry.speak("Not ready to start!");
-            runtime.reset();
-            while (runtime.seconds() < 2) {
-            }
-            requestOpModeStop();
-        }
-        runtime.reset();
-
+        // set up camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -141,20 +123,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
             }
         });
 
-        waitForStart();
-
-        /*
-        x = 0;
-        y = 0;
-        degrees = 0;
-        startPose0 = new Pose2d(x, y, Math.toRadians(degrees));
-        drive.setPoseEstimate(startPose0);
-        trajSeq0 = drive.trajectorySequenceBuilder(startPose0)
-                .strafeLeft(6)
-                .build();
-        drive.followTrajectorySequence(trajSeq0);
-         */
-
+        // start reading tags
         while (opModeIsActive() && !tagFound) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
@@ -178,7 +147,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
                     }
                 }
-                // We do see tags!
+                // We do see tags! Yay!
                 else {
                     numFramesWithoutDetection = 0;
 
@@ -190,8 +159,10 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
 
                     tagFound=true;
 
+                    // loop through detected tags - there should be only one (:
                     for (AprilTagDetection detection : detections) {
 
+                        //determine which zone to park in
                         if (detection.id==1) {
                             parkZone = ZONE_ONE;
                         } else if (detection.id==2) {
@@ -214,10 +185,36 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
             }
         }
 
+        // init Drive
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
+
+        // run set up menu
+        telemetry.speak("Hello, My Name is Bread!");
+        while (!menuFlag && !isStarted()) {
+            menuFlag = autonomousConfiguration.init_loop();
+            telemetry.update();
+        }
+
+        // check to make sure starting config is valid
+        if (!autonomousConfiguration.getReadyToStart()) {
+            telemetry.addData("Alert", "Not ready to start!");
+            telemetry.speak("Not ready to start!");
+            runtime.reset();
+            while (runtime.seconds() < 2) {
+            }
+            requestOpModeStop();
+        }
+        runtime.reset();
+
+        // wait for start button to be pressed
+        waitForStart();
+
+        // do a starting delay if requested
         double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
         while (runtime.seconds() < delay) {
         }
-
+        
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
                 x = -32;

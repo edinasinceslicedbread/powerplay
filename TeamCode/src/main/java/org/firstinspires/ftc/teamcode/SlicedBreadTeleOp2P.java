@@ -71,7 +71,7 @@ public class SlicedBreadTeleOp2P extends OpMode
     double turbo = 0.6;
     final double TURBO_BASE = 0.6;
     private double speed_limit = 1.0;
-    double LIMIT_RAMP = .75;
+    double LIMIT_RAMP = .6;
 
     // lift constants
     final int HIGH = 2900;
