@@ -12,7 +12,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 /*
-        // Red Right
+        // Red Right - shove sideways
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
@@ -66,7 +66,7 @@ public class MeepMeepTesting {
                 );
 */
 
-        // Red Right
+        // Red Right - bad trajectory
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
@@ -75,44 +75,19 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
                                 .lineTo(new Vector2d(14, -60))
                                 .splineToLinearHeading(new Pose2d(10,-24, Math.toRadians(180)), Math.toRadians(90))
-                                .addTemporalMarker(() -> {})
+                                .addTemporalMarker(() -> {}) //raise lift
                                 .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                //.lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
-                                .splineTo(new Vector2d(58, -12), Math.toRadians(0))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .back(1)
-                                .splineTo(new Vector2d(32, -8), Math.toRadians(135.00))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .splineTo(new Vector2d(58, -12), Math.toRadians(0))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .back(1)
-                                .splineTo(new Vector2d(32, -8), Math.toRadians(135.00))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .splineTo(new Vector2d(58, -12), Math.toRadians(0))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .back(1)
-                                .splineTo(new Vector2d(32, -8), Math.toRadians(135.00))
-                                .addTemporalMarker(() -> {})
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {})
-                                .lineToLinearHeading(new Pose2d(36,-12, Math.toRadians(90)))
+                                .addTemporalMarker(() -> {}) // open grip
+                                .lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
+                                .addTemporalMarker(() -> {
+                                })
                                 .lineTo(new Vector2d(12,-12))
                 .build()
                 );
 
         // Blue Left
-/*
+
+        /*
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)

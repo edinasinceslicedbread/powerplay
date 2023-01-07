@@ -1,30 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
-
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
-import org.firstinspires.ftc.teamcode.AutonomousOptions;
 
 import java.util.ArrayList;
-@Disabled
-@Autonomous(name="SlicedBreadAuto", group="Autonomous")
-public class SlicedBreadAuto extends LinearOpMode {
+
+@Autonomous(name="SlicedBreadAutoState", group="Autonomous")
+public class SlicedBreadAutoState extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
@@ -47,6 +42,24 @@ public class SlicedBreadAuto extends LinearOpMode {
     double cx = 480;
     double cy = 620;
 
+    final double RIGHT_DROPX = 8.5;
+    final double RIGHT_DROPY = 24;
+    final double LEFT_DROPX = 6.25;
+    final double LEFT_DROPY = 31.75;
+
+    final double RIGHT_C2_X = 10.0;
+    final double RIGHT_C2_Y = 24.0;
+
+    final double RIGHT_STACK_X = 64;
+    final double RIGHT_STACK_Y = 12;
+    final double LEFT_STACK_X = 58;
+    final double LEFT_STACK_Y = 12;
+
+    final double D3_X = 33.1;
+    final double D3_Y = 4.4;
+    final double B3_X = 32;
+    final double B3_Y = 8;
+
     // UNITS ARE METERS
     double tagsize = 0.0444;
 
@@ -61,12 +74,16 @@ public class SlicedBreadAuto extends LinearOpMode {
     final double OPEN = 0;
     final double CLOSED = 1;
 
-    final int HIGH = 2900;
-    final int DRIVE = 300;
+    final int HIGH = 2825;
+    final int DRIVE = 0;
+    final int STACK = 400;
+    final int STACK_SAFE = 750;
+    final int CONE_HEIGHT = 75;
 
-    final double FRONT = 0;
-    final double SIDE = 0.5;
-    final double BACK = 1.0;
+
+    final double FRONT = 0.03;
+    final double SIDE = 0.53;
+    final double BACK = 1.03;
 
     final double ZONE_ONE = 49;
     final double ZONE_TWO = 25;
@@ -93,29 +110,15 @@ public class SlicedBreadAuto extends LinearOpMode {
         // init lift
         DcMotor lift = hardwareMap.dcMotor.get("lift");
 
+        // set up lift
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // init Drive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
 
-        while (!menuFlag && !isStarted()) {
-            menuFlag = autonomousConfiguration.init_loop();
-            telemetry.update();
-        }
-
-        if (!autonomousConfiguration.getReadyToStart()) {
-            telemetry.addData("Alert", "Not ready to start!");
-            telemetry.speak("Not ready to start!");
-            runtime.reset();
-            while (runtime.seconds() < 2) {
-            }
-            requestOpModeStop();
-        }
-        runtime.reset();
-
+        // set up camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -136,21 +139,22 @@ public class SlicedBreadAuto extends LinearOpMode {
             }
         });
 
-        waitForStart();
+        // preload cone
+        intake.moveAbsolute(CLOSED);
+        sleep(1000);
 
-        /*
-        x = 0;
-        y = 0;
-        degrees = 0;
-        startPose0 = new Pose2d(x, y, Math.toRadians(degrees));
-        drive.setPoseEstimate(startPose0);
-        trajSeq0 = drive.trajectorySequenceBuilder(startPose0)
-                .strafeLeft(6)
-                .build();
-        drive.followTrajectorySequence(trajSeq0);
-         */
+        // set start game lift position
+        lift.setTargetPosition(300);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(1);
 
-        while (opModeIsActive() && !tagFound) {
+        // init menu
+        autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
+
+        // start reading tags
+        // run set up menu
+        while (!menuFlag && !isStarted()) {
+            menuFlag = autonomousConfiguration.init_loop();
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -159,9 +163,6 @@ public class SlicedBreadAuto extends LinearOpMode {
 
             // If there's been a new frame...
             if (detections != null) {
-                telemetry.addData("FPS", camera.getFps());
-                telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
-                telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
 
                 // If we don't see any tags
                 if (detections.size() == 0) {
@@ -173,7 +174,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
                     }
                 }
-                // We do see tags!
+                // We do see tags! Yay!
                 else {
                     numFramesWithoutDetection = 0;
 
@@ -185,8 +186,10 @@ public class SlicedBreadAuto extends LinearOpMode {
 
                     tagFound=true;
 
+                    // loop through detected tags - there should be only one (:
                     for (AprilTagDetection detection : detections) {
 
+                        //determine which zone to park in
                         if (detection.id==1) {
                             parkZone = ZONE_ONE;
                         } else if (detection.id==2) {
@@ -195,13 +198,7 @@ public class SlicedBreadAuto extends LinearOpMode {
                             parkZone = ZONE_THREE;
                         }
 
-                        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
-                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+                        //telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                     }
                 }
 
@@ -209,76 +206,92 @@ public class SlicedBreadAuto extends LinearOpMode {
             }
         }
 
+        // check to make sure starting config is valid
+        if (!autonomousConfiguration.getReadyToStart()) {
+            telemetry.addData("Alert", "Not ready to start!");
+            telemetry.speak("Not ready to start!");
+            runtime.reset();
+            while (runtime.seconds() < 2) {
+            }
+            requestOpModeStop();
+        }
+        runtime.reset();
+
+        // wait for start button to be pressed
+        waitForStart();
+
+        // do a starting delay if requested
         double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
         while (runtime.seconds() < delay) {
         }
 
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
-                x = -30;
+                x = -32;
                 y = 64;
                 degrees = -90;
-
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeLeft(18)
-                        .lineTo(new Vector2d(-12,36))
-                        .turn(Math.toRadians(45))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .lineTo(new Vector2d(-14, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(-RIGHT_DROPX, RIGHT_DROPY, Math.toRadians(180)), Math.toRadians(-90))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(8)
+                        .waitSeconds(1)
+                        .lineToSplineHeading(new Pose2d(-12,36, Math.toRadians(-90)))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .turn(Math.toRadians(-45))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .waitSeconds(1)
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
+
             } else {  // Blue Left
-                x = 42;
+                x = 41.25;
                 y = 64;
                 degrees = -90;
-
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeRight(30)
-                        .lineTo(new Vector2d(12,36))
-                        .turn(Math.toRadians(-45))
-                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(300);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .lineTo(new Vector2d(16, 60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(LEFT_DROPX, LEFT_DROPY, Math.toRadians(-135)), Math.toRadians(-135))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(7)
+                        .waitSeconds(1)
+                        .lineToSplineHeading(new Pose2d(12,36, Math.toRadians(-90)))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .strafeLeft(1.5)
-                        .turn(Math.toRadians(45))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .strafeLeft(parkZone)
+                        .waitSeconds(1)
+                        .strafeLeft(parkZone) // flip it!
                         .build();
             }
         } else {  // Red Alliance
@@ -289,65 +302,167 @@ public class SlicedBreadAuto extends LinearOpMode {
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeTo(new Vector2d(12, -64))
-                        .lineTo(new Vector2d(12,-36))
-                        .turn(Math.toRadians(45))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .lineTo(new Vector2d(14, -60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(RIGHT_C2_X, -RIGHT_C2_Y, Math.toRadians(180)), Math.toRadians(90))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(8)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(8)
+                        .waitSeconds(0.5)
+                        .lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .waitSeconds(0.5)
+                        .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(0.5)
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK_SAFE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+
+                        .back(1)
+                        .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                        // lift to HIGH
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        // drive to D3
+                        .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(0.5)
+                        .forward(1)
+
+                            // lift to stack high - 1ch
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK - CONE_HEIGHT * 1);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+
+                        .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(0.5)
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK_SAFE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .back(1)
+
+                        .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+
+                        // lift to high
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+
+                        .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
+
+                        // open intake
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(0.5)
+                        .forward(1)
+                        // lift to stack height - 2ch
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK - CONE_HEIGHT * 2);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+
+                        .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(0.5)
+                        // raise to safe stack
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(STACK_SAFE);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+
+                        .back(1)
+
+                        .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                        // raise to HIGH
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(HIGH);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+
+                        .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
+
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
+                        .waitSeconds(0.5)
+                        .forward(1)
+                        // lift to DRIVE
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .turn(Math.toRadians(-45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .waitSeconds(1)
+
+                        .lineToLinearHeading(new Pose2d(36,-12, Math.toRadians(90)))
+
+                        // park
                         .strafeLeft(parkZone-48.99) // flip it!
                         .build();
             } else {  // Red Left
-                x = -42;
+                x = -41.25;
                 y = -64;
                 degrees = 90;
                 startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .strafeRight(30)
-                        .lineTo(new Vector2d(-12,-36))
-                        .turn(Math.toRadians(-45))
-                        .strafeRight(1.5)
+                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                        .waitSeconds(1)
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(300);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .lineTo(new Vector2d(-16, -60))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(2)
+                        .splineToLinearHeading(new Pose2d(-LEFT_DROPX, -LEFT_DROPY, Math.toRadians(45)), Math.toRadians(45))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .forward(7)
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(2)
-                        .back(7)
+                        .waitSeconds(1)
+                        .lineToSplineHeading(new Pose2d(-12,-36, Math.toRadians(90)))
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        .waitSeconds(1)
-                        .strafeLeft(1.5)
-                        .turn(Math.toRadians(45))
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .waitSeconds(1)
-                        .strafeLeft(parkZone)
+                        .strafeLeft(parkZone) // flip it!
                         .build();
+
             }
         }
 

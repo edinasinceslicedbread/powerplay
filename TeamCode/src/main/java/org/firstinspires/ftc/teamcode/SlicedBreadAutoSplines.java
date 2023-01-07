@@ -214,7 +214,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
         double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
         while (runtime.seconds() < delay) {
         }
-        
+
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
                 x = -32;
