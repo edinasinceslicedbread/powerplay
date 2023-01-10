@@ -18,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="SlicedBreadAutoState", group="Autonomous")
-public class SlicedBreadAutoState extends LinearOpMode {
+@Autonomous(name="SlicedBreadAutoStateNoRotate", group="Autonomous")
+public class SlicedBreadAutoStateNoRotate extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
@@ -42,27 +42,23 @@ public class SlicedBreadAutoState extends LinearOpMode {
     double cx = 480;
     double cy = 620;
 
-    // first autonomous cone drop coordinates
     final double RIGHT_DROPX = 8.5;
     final double RIGHT_DROPY = 24;
     final double LEFT_DROPX = 6.25;
     final double LEFT_DROPY = 31.75;
 
-    // autonomous cone stack coordinates
+    final double RIGHT_C2_X = 10.0;
+    final double RIGHT_C2_Y = 24.0;
+
     final double RIGHT_STACK_X = 64;
     final double RIGHT_STACK_Y = 12;
     final double LEFT_STACK_X = 58;
     final double LEFT_STACK_Y = 12;
 
-    // coordinate autonomous constants
     final double D3_X = 33.1;
     final double D3_Y = 4.4;
     final double B3_X = 32;
     final double B3_Y = 8;
-    final double D2_X = 33.1;
-    final double D2_Y = 28.4; // check for accuracy
-    final double RIGHT_C2_X = 10.0;
-    final double RIGHT_C2_Y = 24.0;
 
     // UNITS ARE METERS
     double tagsize = 0.0444;
@@ -70,31 +66,28 @@ public class SlicedBreadAutoState extends LinearOpMode {
     int numFramesWithoutDetection = 0;
     boolean tagFound = false;
 
-    // april tag constants
     final float DECIMATION_HIGH = 3;
     final float DECIMATION_LOW = 2;
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
-    // gripper constants
     final double OPEN = 0;
     final double CLOSED = 1;
 
-    // arm height constants
     final int HIGH = 2825;
     final int DRIVE = 0;
     final int STACK = 400;
     final int STACK_SAFE = 750;
     final int CONE_HEIGHT = 75;
 
-    // wrist constants
+
     final double FRONT = 0.03;
+    final double SIDE = 0.53;
     final double BACK = 1.03;
 
-    // parking constants
-    final double ZONE_ONE = 48;
-    final double ZONE_TWO = 24;
-    final double ZONE_THREE = -0.01;
+    final double ZONE_ONE = 49;
+    final double ZONE_TWO = 25;
+    final double ZONE_THREE = 0.01;
 
     Pose2d startPose, startPose0;
     TrajectorySequence trajSeq,trajSeq0;
@@ -234,10 +227,11 @@ public class SlicedBreadAutoState extends LinearOpMode {
 
         if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
-                // set start pose
-                startPose = new Pose2d(-32, 64, Math.toRadians(-90));
+                x = -32;
+                y = 64;
+                degrees = -90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
-
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .lineTo(new Vector2d(-14, 60))
@@ -263,10 +257,11 @@ public class SlicedBreadAutoState extends LinearOpMode {
                         .build();
 
             } else {  // Blue Left
-                // set start position
-                startPose = new Pose2d(41.25, 64, Math.toRadians(-90));
+                x = 41.25;
+                y = 64;
+                degrees = -90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
-                
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
@@ -301,52 +296,44 @@ public class SlicedBreadAutoState extends LinearOpMode {
             }
         } else {  // Red Alliance
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
-                // set start position
-                startPose = new Pose2d(32, -64, Math.toRadians(90));
+                x = 32;
+                y = -64;
+                degrees = 90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
-
-                // create trajectory sequence
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        // reposition wrist to front
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        // drive around D1
                         .lineTo(new Vector2d(14, -60))
-                        // raise lift to HIGH
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // drive to C2
                         .splineToLinearHeading(new Pose2d(RIGHT_C2_X, -RIGHT_C2_Y, Math.toRadians(180)), Math.toRadians(90))
-                        // reposition wrist and drop
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
-                        // wait for intake to open
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(0.5)
-                        // back away from C2
                         .lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
-                        // lower lift to stack height
+                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // reposition wrist
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-
-                        // move to stack for new cone
+                        .waitSeconds(0.5)
                         .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(0.5)
-                        // lift cone off of stack
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK_SAFE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // reposition wrist
+
+                        .back(1)
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                        .waitSeconds(1)
                         // lift to HIGH
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
@@ -355,96 +342,100 @@ public class SlicedBreadAutoState extends LinearOpMode {
                         })
                         // drive to D3
                         .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
-                        // open intake and back up
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(0.5)
-                        .forward(1) // actually backing up
-                        // lift to stack HIGH-1ch
+                        .forward(1)
+
+                            // lift to stack high - 1ch
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK - CONE_HEIGHT * 1);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // flip wrist to FRONT position
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .waitSeconds(1)
 
-                        // return to stack for new cone
                         .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(0.5)
-                        // lift cone off of stack
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK_SAFE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // reposition wrist
+                        .back(1)
+
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
-                        // lift to HIGH
+                        .waitSeconds(1)
+
+                        // lift to high
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // drive to D3
+
                         .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
-                        // open intake and back up
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+
+                        // open intake
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(0.5)
-                        .forward(1) // actually backing up
-                        // lift to stack HIGH-2ch
+                        .forward(1)
+                        // lift to stack height - 2ch
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK - CONE_HEIGHT * 2);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // flip wrist to FRONT position
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                        .waitSeconds(1)
 
-                        // return to stack for cone 3
                         .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(0.5)
-                        // lift cone off of stack
+                        // raise to safe stack
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(STACK_SAFE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // reposition wrist
+
+                        .back(1)
+
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
-                        // lift to HIGH
+                        .waitSeconds(1)
+                        // raise to HIGH
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(HIGH);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // drive to D3
+
                         .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
-                        // open intake and back up
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+
+                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
                         .waitSeconds(0.5)
-                        .forward(1) // actually backing up
-                        // lift to stack HIGH-3ch
+                        .forward(1)
+                        // lift to DRIVE
                         .addTemporalMarker(() -> {
                             lift.setTargetPosition(DRIVE);
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // flip wrist to FRONT position
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        // drive to middle of zone 2
+
                         .lineToLinearHeading(new Pose2d(36,-12, Math.toRadians(90)))
 
-                        // park in correct zone
-                        .strafeLeft(parkZone-23.99)
+                        // park
+                        .strafeLeft(parkZone-48.99) // flip it!
                         .build();
-
             } else {  // Red Left
-                // set start pose
-                startPose = new Pose2d(-41.25, -64, Math.toRadians(90));
+                x = -41.25;
+                y = -64;
+                degrees = 90;
+                startPose = new Pose2d(x, y, Math.toRadians(degrees));
                 drive.setPoseEstimate(startPose);
-
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(1)
