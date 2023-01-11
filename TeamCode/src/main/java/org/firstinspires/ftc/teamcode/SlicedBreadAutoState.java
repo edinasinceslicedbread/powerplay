@@ -43,25 +43,25 @@ public class SlicedBreadAutoState extends LinearOpMode {
     double cy = 620;
 
     // first autonomous cone drop coordinates
-    final double RIGHT_DROPX = 8.5;
-    final double RIGHT_DROPY = 24;
+    final double RIGHT_DROPX = 5;
+    final double RIGHT_DROPY = 21.5;
     final double LEFT_DROPX = 6.25;
     final double LEFT_DROPY = 31.75;
 
     // autonomous cone stack coordinates
-    final double RIGHT_STACK_X = 64;
-    final double RIGHT_STACK_Y = 12;
+    final double RIGHT_STACK_X = 63;
+    final double RIGHT_STACK_Y = 11;
     final double LEFT_STACK_X = 58;
     final double LEFT_STACK_Y = 12;
 
     // coordinate autonomous constants
-    final double D3_X = 33.1;
+    final double D3_X = 30.5;
     final double D3_Y = 4.4;
     final double B3_X = 32;
     final double B3_Y = 8;
     final double D2_X = 33.1;
     final double D2_Y = 28.4; // check for accuracy
-    final double RIGHT_C2_X = 10.0;
+    final double RIGHT_C2_X = 9.0;
     final double RIGHT_C2_Y = 24.0;
 
     // UNITS ARE METERS
@@ -86,6 +86,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
     final int STACK = 400;
     final int STACK_SAFE = 750;
     final int CONE_HEIGHT = 75;
+    final int DROP_HEIGHT = HIGH-500;
 
     // wrist constants
     final double FRONT = 0.03;
@@ -96,14 +97,13 @@ public class SlicedBreadAutoState extends LinearOpMode {
     final double ZONE_TWO = 24;
     final double ZONE_THREE = -0.01;
 
-    Pose2d startPose, startPose0;
-    TrajectorySequence trajSeq,trajSeq0;
+    Pose2d startPose;
+    TrajectorySequence trajSeq;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         // Game initialization
-        double x,y,degrees;
         double parkZone = ZONE_TWO; // Set this variable when we read the AprilTag
         boolean menuFlag = false;
 
@@ -317,13 +317,18 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
-                        // drive to C2
+                         // drive to C2
                         .splineToLinearHeading(new Pose2d(RIGHT_C2_X, -RIGHT_C2_Y, Math.toRadians(180)), Math.toRadians(90))
                         // reposition wrist and drop
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                         // wait for intake to open
-                        .waitSeconds(0.5)
+                        .addTemporalMarker(() -> {
+                            lift.setTargetPosition(DROP_HEIGHT);
+                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            lift.setPower(1);
+                        })
+                        .back(1)
                         // back away from C2
                         .lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
                         // lower lift to stack height
@@ -345,6 +350,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
+                        .back(1)
                         // reposition wrist
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
                         // lift to HIGH
@@ -369,7 +375,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
 
                         // return to stack for new cone
-                        .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                        .splineTo(new Vector2d(RIGHT_STACK_X+1, -RIGHT_STACK_Y), Math.toRadians(0))
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(0.5)
                         // lift cone off of stack
@@ -378,6 +384,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
+                        .back(1)
                         // reposition wrist
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
                         // lift to HIGH
@@ -387,7 +394,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setPower(1);
                         })
                         // drive to D3
-                        .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
+                        .splineTo(new Vector2d(D3_X+1, -D3_Y), Math.toRadians(135.00))
                         // open intake and back up
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                         .waitSeconds(0.5)
@@ -402,7 +409,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                         .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
 
                         // return to stack for cone 3
-                        .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                        .splineTo(new Vector2d(RIGHT_STACK_X+2, -RIGHT_STACK_Y), Math.toRadians(0))
                         .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                         .waitSeconds(0.5)
                         // lift cone off of stack
@@ -411,6 +418,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             lift.setPower(1);
                         })
+                        .back(1)
                         // reposition wrist
                         .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
                         // lift to HIGH
@@ -420,7 +428,7 @@ public class SlicedBreadAutoState extends LinearOpMode {
                             lift.setPower(1);
                         })
                         // drive to D3
-                        .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
+                        .splineTo(new Vector2d(D3_X+2, -D3_Y), Math.toRadians(135.00))
                         // open intake and back up
                         .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                         .waitSeconds(0.5)

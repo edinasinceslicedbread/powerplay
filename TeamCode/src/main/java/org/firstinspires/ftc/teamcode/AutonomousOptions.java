@@ -14,8 +14,8 @@ public class AutonomousOptions implements Serializable {
     private int delayStartSeconds;
     private AllianceColor allianceColor;
     private StartPosition startPosition;
-    private ParkLocation parklocation;
-    private ParkOnSignalZone parkOnSignalZone;
+    private DropLocation droplocation;
+    private FirstDrop firstDrop;
     private PlaceConeInTerminal placeConeInTerminal;
     private PlaceConesOnJunctions placeConesOnJunctions;
 
@@ -35,20 +35,20 @@ public class AutonomousOptions implements Serializable {
         this.startPosition = startPosition;
     }
 
-    public ParkLocation getParkLocation() {
-        return parklocation;
+    public DropLocation getDropLocation() {
+        return droplocation;
     }
 
-    public void setParkLocation(ParkLocation parklocation) {
-        this.parklocation = parklocation;
+    public void setDropLocation(DropLocation droplocation) {
+        this.droplocation = droplocation;
     }
 
-    public ParkOnSignalZone getParkOnSignalZone() {
-        return parkOnSignalZone;
+    public FirstDrop getFirstDrop() {
+        return firstDrop;
     }
 
-    public void setParkOnSignalZone(ParkOnSignalZone parkOnSignalZone) {
-        this.parkOnSignalZone = parkOnSignalZone;
+    public void setFirstDrop(FirstDrop firstDrop) {
+        this.firstDrop = firstDrop;
     }
 
     public PlaceConeInTerminal getPlaceConeInTerminal() {
@@ -100,27 +100,25 @@ public class AutonomousOptions implements Serializable {
     }
 
     /*
-     * Where do we park. Default is do not park.
+     * Where do we drop. Default is D3.
      */
-    public enum ParkLocation {
-        None,
-        Terminal,
-        SubStation;
+    public enum DropLocation {
+        D3,
+        D2;
 
-        public ParkLocation getNext() {
+        public DropLocation getNext() {
             return values()[(ordinal() + 1) % values().length];
         }
     }
 
     /*
-     * Yes means park on the signal zone.
-     * Default is No.
+     * Pick which pole for the initial drop
      */
-    public enum ParkOnSignalZone {
-        No,
-        Yes;
+    public enum FirstDrop {
+        C2,
+        D2;
 
-        public ParkOnSignalZone getNext() {
+        public FirstDrop getNext() {
             return values()[(ordinal() + 1) % values().length];
         }
     }

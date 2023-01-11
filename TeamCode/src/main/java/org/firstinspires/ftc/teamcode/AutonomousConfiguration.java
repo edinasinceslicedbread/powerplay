@@ -40,8 +40,8 @@ public class AutonomousConfiguration {
     private Telemetry telemetry;
     private Telemetry.Item teleAlliance;
     private Telemetry.Item teleStartPosition;
-    private Telemetry.Item teleParkLocation;
-    private Telemetry.Item teleParkOnSignalZone;
+    private Telemetry.Item teleDropLocation;
+    private Telemetry.Item teleFirstDrop;
     private Telemetry.Item telePlaceConeInTerminal;
     private Telemetry.Item telePlaceConesOnJunctions;
     private Telemetry.Item teleDelayStartSeconds;
@@ -76,12 +76,12 @@ public class AutonomousConfiguration {
         return autonomousOptions.getStartPosition();
     }
 
-    public AutonomousOptions.ParkLocation getParkLocation() {
-        return autonomousOptions.getParkLocation();
+    public AutonomousOptions.DropLocation getDropLocation() {
+        return autonomousOptions.getDropLocation();
     }
 
-    public AutonomousOptions.ParkOnSignalZone getParkOnSignalZone() {
-        return autonomousOptions.getParkOnSignalZone();
+    public AutonomousOptions.FirstDrop getFirstDrop() {
+        return autonomousOptions.getFirstDrop();
     }
 
     public AutonomousOptions.PlaceConesOnJunctions getPlaceConesOnJunctions() {
@@ -103,8 +103,8 @@ public class AutonomousConfiguration {
     private void ShowHelp() {
         teleAlliance = telemetry.addData("X = Blue, B = Red", autonomousOptions.getAllianceColor());
         teleStartPosition = telemetry.addData("D-pad left/right, select start position", autonomousOptions.getStartPosition());
-        teleParkLocation = telemetry.addData("D-pad up to cycle park location", autonomousOptions.getParkLocation());
-        teleParkOnSignalZone = telemetry.addData("D-pad down to cycle park on signal zone", autonomousOptions.getParkOnSignalZone());
+        teleDropLocation = telemetry.addData("D-pad up to cycle drop location", autonomousOptions.getDropLocation());
+        teleFirstDrop = telemetry.addData("D-pad down to cycle initial drop", autonomousOptions.getFirstDrop());
         telePlaceConesOnJunctions = telemetry.addData("Y to cycle cones on junctions", autonomousOptions.getPlaceConesOnJunctions());
         telePlaceConeInTerminal = telemetry.addData("A to cycle place cone in terminal", autonomousOptions.getPlaceConeInTerminal());
         teleDelayStartSeconds = telemetry.addData("Left & Right buttons, Delay Start", autonomousOptions.getDelayStartSeconds());
@@ -150,37 +150,34 @@ public class AutonomousConfiguration {
         }
         teleStartPosition.setValue(autonomousOptions.getStartPosition());
 
-        //Park Location
+        //Drop Location
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
-            AutonomousOptions.ParkLocation parkLocation = autonomousOptions.getParkLocation().getNext();
-            switch (parkLocation) {
-                case None:
-                    telemetry.speak("park, no.");
+            AutonomousOptions.DropLocation dropLocation = autonomousOptions.getDropLocation().getNext();
+            switch (dropLocation) {
+                case D2:
+                    telemetry.speak("Drop on D2");
                     break;
-                case SubStation:
-                    telemetry.speak("park in substation");
-                    break;
-                case Terminal:
-                    telemetry.speak("park in terminal");
+                case D3:
+                    telemetry.speak("Drop on D3");
                     break;
             }
-            autonomousOptions.setParkLocation(parkLocation);
-            teleParkLocation.setValue(parkLocation);
+            autonomousOptions.setDropLocation(dropLocation);
+            teleDropLocation.setValue(dropLocation);
         }
 
-        //Park on Signal Zone
+        // Where to make first drop
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
-            AutonomousOptions.ParkOnSignalZone parkSignalZone = autonomousOptions.getParkOnSignalZone().getNext();
-            switch (parkSignalZone) {
-                case Yes:
-                    telemetry.speak("park on signal zone, yes");
+            AutonomousOptions.FirstDrop firstDrop = autonomousOptions.getFirstDrop().getNext();
+            switch (firstDrop) {
+                case C2:
+                    telemetry.speak("First drop on C2");
                     break;
-                case No:
-                    telemetry.speak("park on signal zone,, no");
+                case D2:
+                    telemetry.speak("First drop on D2");
                     break;
             }
-            autonomousOptions.setParkOnSignalZone(parkSignalZone);
-            teleParkOnSignalZone.setValue(parkSignalZone);
+            autonomousOptions.setFirstDrop(firstDrop);
+            teleFirstDrop.setValue(firstDrop);
         }
 
         //Place cones on junction.
@@ -244,10 +241,10 @@ public class AutonomousConfiguration {
     private void resetOptions() {
         autonomousOptions.setAllianceColor(AutonomousOptions.AllianceColor.None);
         autonomousOptions.setStartPosition(AutonomousOptions.StartPosition.None);
-        autonomousOptions.setParkLocation(AutonomousOptions.ParkLocation.None);
+        autonomousOptions.setDropLocation(AutonomousOptions.DropLocation.D3);
         autonomousOptions.setPlaceConeInTerminal(AutonomousOptions.PlaceConeInTerminal.No);
         autonomousOptions.setPlaceConesOnJunctions(AutonomousOptions.PlaceConesOnJunctions.No);
-        autonomousOptions.setParkOnSignalZone(AutonomousOptions.ParkOnSignalZone.No);
+        autonomousOptions.setFirstDrop(AutonomousOptions.FirstDrop.C2);
         autonomousOptions.setDelayStartSeconds(0);
         readyToStart = false;
         savedToFile = false;
