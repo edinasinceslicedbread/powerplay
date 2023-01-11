@@ -42,12 +42,6 @@ public class SlicedBreadAutoState extends LinearOpMode {
     double cx = 480;
     double cy = 620;
 
-    // first autonomous cone drop coordinates
-    final double RIGHT_DROPX = 5;
-    final double RIGHT_DROPY = 21.5;
-    final double LEFT_DROPX = 6.25;
-    final double LEFT_DROPY = 31.75;
-
     // autonomous cone stack coordinates
     final double RIGHT_STACK_X = 63;
     final double RIGHT_STACK_Y = 11;
@@ -239,27 +233,6 @@ public class SlicedBreadAutoState extends LinearOpMode {
                 drive.setPoseEstimate(startPose);
 
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .lineTo(new Vector2d(-14, 60))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(HIGH);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .splineToLinearHeading(new Pose2d(-RIGHT_DROPX, RIGHT_DROPY, Math.toRadians(180)), Math.toRadians(-90))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(1)
-                        .lineToSplineHeading(new Pose2d(-12,36, Math.toRadians(-90)))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(DRIVE);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .waitSeconds(1)
-                        .strafeLeft(parkZone-48.99) // flip it!
                         .build();
 
             } else {  // Blue Left
@@ -268,35 +241,6 @@ public class SlicedBreadAutoState extends LinearOpMode {
                 drive.setPoseEstimate(startPose);
                 
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
-                        .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .lineTo(new Vector2d(16, 60))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(HIGH);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .splineToLinearHeading(new Pose2d(LEFT_DROPX, LEFT_DROPY, Math.toRadians(-135)), Math.toRadians(-135))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(1)
-                        .lineToSplineHeading(new Pose2d(12,36, Math.toRadians(-90)))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(DRIVE);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .waitSeconds(1)
-                        .strafeLeft(parkZone) // flip it!
                         .build();
             }
         } else {  // Red Alliance
@@ -454,35 +398,6 @@ public class SlicedBreadAutoState extends LinearOpMode {
                 drive.setPoseEstimate(startPose);
 
                 trajSeq = drive.trajectorySequenceBuilder(startPose)
-                        .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
-                        .waitSeconds(1)
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(300);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .lineTo(new Vector2d(-16, -60))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(HIGH);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .splineToLinearHeading(new Pose2d(-LEFT_DROPX, -LEFT_DROPY, Math.toRadians(45)), Math.toRadians(45))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> intake.moveAbsolute(OPEN))
-                        .waitSeconds(1)
-                        .lineToSplineHeading(new Pose2d(-12,-36, Math.toRadians(90)))
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .addTemporalMarker(() -> {
-                            lift.setTargetPosition(DRIVE);
-                            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            lift.setPower(1);
-                        })
-                        .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                        .waitSeconds(1)
-                        .strafeLeft(parkZone) // flip it!
                         .build();
 
             }
