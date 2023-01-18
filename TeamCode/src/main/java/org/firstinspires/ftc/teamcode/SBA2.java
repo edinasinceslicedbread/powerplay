@@ -18,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="SlicedBreadAutoState", group="Autonomous")
-public class SlicedBreadAutoState extends LinearOpMode {
+@Autonomous(name="SBA2", group="Autonomous")
+public class SBA2 extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
