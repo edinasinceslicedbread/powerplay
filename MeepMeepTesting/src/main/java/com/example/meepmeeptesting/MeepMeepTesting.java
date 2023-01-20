@@ -2,6 +2,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
@@ -9,8 +10,6 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import java.util.Vector;
 
 public class MeepMeepTesting {
-
-
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
@@ -38,7 +37,7 @@ public class MeepMeepTesting {
                                 .setReversed(false)
                                 .waitSeconds(1)
                                 // reposition wrist
-                                // drive to D3
+                                // drive to B3
                                 .splineToLinearHeading(new Pose2d(-32, -8, Math.toRadians(45)), Math.toRadians(45))
                                 // open intake and back up
                                 .waitSeconds(0.5)
@@ -69,7 +68,7 @@ public class MeepMeepTesting {
                                 .build()
                 );
 
-        // LEFT
+        // RIGHT
         RoadRunnerBotEntity myBotRight = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
@@ -118,9 +117,9 @@ public class MeepMeepTesting {
                                 // open intake and back up
                                 .waitSeconds(0.5)
                                 .setReversed(true)
-                                .splineToLinearHeading(new Pose2d(36,-12, Math.toRadians(90)), Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(60,-12, Math.toRadians(90)), Math.toRadians(0))
                                 .setReversed(false)
-                                //.strafeLeft(0-23.99)
+                                //.strafeLeft(-23.99)
                                 .build()
                 );
 

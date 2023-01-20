@@ -51,12 +51,18 @@ public class SBA2 extends LinearOpMode {
     // coordinate autonomous constants
     final double D3_X = 30.5;
     final double D3_Y = 4.4;
-    final double B3_X = 32;
-    final double B3_Y = 8;
+    final double B3_X = 30;
+    final double B3_Y = 5;
     final double D2_X = 33.1;
     final double D2_Y = 28.4; // check for accuracy
     final double RIGHT_C2_X = 9.0;
     final double RIGHT_C2_Y = 24.0;
+    final double LEFT_C2_X = 9.0;
+    final double LEFT_C2_Y = 24;
+    final double START_LEFT_X = 41.25;
+    final double START_LEFT_Y = 64;
+    final double START_RIGHT_X = 32;
+    final double START_RIGHT_Y = 64;
 
     // UNITS ARE METERS
     double tagsize = 0.0444;
@@ -80,16 +86,15 @@ public class SBA2 extends LinearOpMode {
     final int STACK = 400;
     final int STACK_SAFE = 750;
     final int CONE_HEIGHT = 75;
-    final int DROP_HEIGHT = HIGH-150;
 
     // wrist constants
     final double FRONT = 0.03;
     final double BACK = 1.03;
 
     // parking constants
-    final double ZONE_ONE = 48;
-    final double ZONE_TWO = 24;
-    final double ZONE_THREE = -0.01;
+    final double ZONE_ONE = 24;
+    final double ZONE_TWO = 0;
+    final double ZONE_THREE = -24;
 
     Pose2d startPose;
     TrajectorySequence trajSeq;
@@ -227,8 +232,10 @@ public class SBA2 extends LinearOpMode {
         }
 
         if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Right
+            telemetry.speak("Right Routine Begin");
+
             // set start position
-            startPose = new Pose2d(32, -64, Math.toRadians(90));
+            startPose = new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90));
             drive.setPoseEstimate(startPose);
 
             // create trajectory sequence
@@ -249,20 +256,20 @@ public class SBA2 extends LinearOpMode {
                     .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .back(4)
-                    // back away from C2
-                    .lineToLinearHeading(new Pose2d(14, -24, Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(14, -12, Math.toRadians(180)))
                     // lower lift to stack height
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(STACK);
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    // reposition wrist
-                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // reposition wrist to BACK
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
                     // move to stack for new cone
+                    .setReversed(true)
                     .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                    .setReversed(false)
                     .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                     .waitSeconds(0.5)
                     // lift cone off of stack
@@ -271,9 +278,8 @@ public class SBA2 extends LinearOpMode {
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    .back(1)
-                    // reposition wrist
-                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                    // reposition wrist to FRONT
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                     // lift to HIGH
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(HIGH);
@@ -285,18 +291,20 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .forward(1) // actually backing up
+                    .back(2)
                     // lift to stack HIGH-1ch
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(STACK - CONE_HEIGHT * 1);
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    // flip wrist to FRONT position
-                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // flip wrist to BACK position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
                     // return to stack for new cone
+                    .setReversed(true)
                     .splineTo(new Vector2d(RIGHT_STACK_X+1, -RIGHT_STACK_Y), Math.toRadians(0))
+                    .setReversed(false)
                     .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                     .waitSeconds(0.5)
                     // lift cone off of stack
@@ -305,9 +313,8 @@ public class SBA2 extends LinearOpMode {
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    .back(1)
-                    // reposition wrist
-                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                    // reposition wrist to FRONT position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                     // lift to HIGH
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(HIGH);
@@ -319,18 +326,20 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .forward(1) // actually backing up
+                    .back(2) // actually backing up
                     // lift to stack HIGH-2ch
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(STACK - CONE_HEIGHT * 2);
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    // flip wrist to FRONT position
-                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // flip wrist to BACK position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
                     // return to stack for cone 3
-                    .splineTo(new Vector2d(RIGHT_STACK_X+2, -RIGHT_STACK_Y), Math.toRadians(0))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(RIGHT_STACK_X+1.5, -RIGHT_STACK_Y), Math.toRadians(0))
+                    .setReversed(false)
                     .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                     .waitSeconds(0.5)
                     // lift cone off of stack
@@ -339,9 +348,8 @@ public class SBA2 extends LinearOpMode {
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    .back(1)
-                    // reposition wrist
-                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+                    // reposition wrist to FRONT position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                     // lift to HIGH
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(HIGH);
@@ -353,30 +361,161 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .forward(1) // actually backing up
-                    // lift to stack HIGH-3ch
+                    .back(2)
+
+                    // lift to DRIVE
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(DRIVE);
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
-                    // flip wrist to FRONT position
-                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
-                    // drive to middle of zone 2
-                    .lineToLinearHeading(new Pose2d(36,-12, Math.toRadians(90)))
 
-                    // park in correct zone
-                    .strafeLeft(parkZone-23.99)
+                    // drive to middle of zone
+                    .setReversed(true)
+                    .splineToLinearHeading(new Pose2d(36-parkZone,-12, Math.toRadians(90)), Math.toRadians(0))
+                    .setReversed(false)
                     .build();
-
         } else {  // Left
             // set start pose
-            startPose = new Pose2d(-41.25, -64, Math.toRadians(90));
+            telemetry.speak("Left Routine Begin");
+            startPose = new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90));
             drive.setPoseEstimate(startPose);
 
             trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .build();
+                    // reposition wrist to front
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // drive around D1
+                    .lineTo(new Vector2d(-14, -60))
+                    // raise lift to HIGH
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(HIGH);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // drive to C2
+                    .splineToLinearHeading(new Pose2d(-LEFT_C2_X, -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
+                    // reposition wrist and drop
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+                    .waitSeconds(0.5)
+                    .lineToLinearHeading(new Pose2d(-14, -12, Math.toRadians(0)))
+                    // lower lift to stack height
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // reposition wrist to BACK
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
+                    // move to stack for new cone
+                    .setReversed(true)
+                    .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
+                    .setReversed(false)
+                    .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                    .waitSeconds(0.5)
+                    // lift cone off of stack
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK_SAFE);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // reposition wrist to FRONT
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // lift to HIGH
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(HIGH);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // drive to B3
+                    .splineToLinearHeading(new Pose2d(-B3_X, -B3_Y, Math.toRadians(45)), Math.toRadians(45))
+                    // open intake and back up
+                    .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+                    .waitSeconds(0.5)
+                    .back(2)
+                    // lift to stack HIGH-1ch
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK - CONE_HEIGHT * 1);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // flip wrist to BACK position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+
+                    // return to stack for new cone
+                    .setReversed(true)
+                    .splineTo(new Vector2d(-LEFT_STACK_X+1, -LEFT_STACK_Y), Math.toRadians(180))
+                    .setReversed(false)
+                    .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                    .waitSeconds(0.5)
+                    // lift cone off of stack
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK_SAFE);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // reposition wrist to FRONT position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // lift to HIGH
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(HIGH);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // drive to B3
+                    .splineToLinearHeading(new Pose2d(-B3_X, -B3_Y, Math.toRadians(45)), Math.toRadians(45))
+                    // open intake and back up
+                    .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+                    .waitSeconds(0.5)
+                    .back(2) // actually backing up
+                    // lift to stack HIGH-2ch
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK - CONE_HEIGHT * 2);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // flip wrist to BACK position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+
+                    // return to stack for cone 3
+                    .setReversed(true)
+                    .splineTo(new Vector2d(-LEFT_STACK_X+2, -LEFT_STACK_Y), Math.toRadians(180))
+                    .setReversed(false)
+                    .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                    .waitSeconds(0.5)
+                    // lift cone off of stack
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK_SAFE);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // reposition wrist to FRONT position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+                    // lift to HIGH
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(HIGH);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // drive to D3
+                    .splineToLinearHeading(new Pose2d(-B3_X, -B3_Y, Math.toRadians(45)), Math.toRadians(45))
+                    // open intake and back up
+                    .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
+                    .waitSeconds(0.5)
+                    .back(2)
+                    // lift to stack DRIVE
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(DRIVE);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+
+                    // drive to middle of zone 2
+                    .setReversed(true)
+                    .splineToLinearHeading(new Pose2d(-36 - parkZone,-12, Math.toRadians(90)), Math.toRadians(0))
+                    .setReversed(false)
+                    .build();
         }
 
         drive.followTrajectorySequence(trajSeq);
