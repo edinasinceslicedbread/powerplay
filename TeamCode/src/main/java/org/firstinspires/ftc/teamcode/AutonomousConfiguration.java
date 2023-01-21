@@ -64,6 +64,8 @@ public class AutonomousConfiguration {
         } else {
             autonomousOptions = getSaveAutoOptions();
         }
+        autonomousOptions.setFirstDrop(AutonomousOptions.FirstDrop.C2);
+        autonomousOptions.setDropLocation(AutonomousOptions.DropLocation.D3);
 
         ShowHelp();
     }

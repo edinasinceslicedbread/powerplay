@@ -45,19 +45,19 @@ public class SBA2 extends LinearOpMode {
     // autonomous cone stack coordinates
     final double RIGHT_STACK_X = 62.5;
     final double RIGHT_STACK_Y = 11;
-    final double LEFT_STACK_X = 58;
-    final double LEFT_STACK_Y = 12;
+    final double LEFT_STACK_X = 63;
+    final double LEFT_STACK_Y = 11;
 
     // coordinate autonomous constants
     final double D3_X = 30.5;
     final double D3_Y = 4.4;
-    final double B3_X = 30;
+    final double B3_X = 32;
     final double B3_Y = 5;
     final double D2_X = 33.1;
     final double D2_Y = 28.4; // check for accuracy
     final double RIGHT_C2_X = 9.0;
     final double RIGHT_C2_Y = 24.0;
-    final double LEFT_C2_X = 9.0;
+    final double LEFT_C2_X = 9.5;
     final double LEFT_C2_Y = 24;
     final double START_LEFT_X = 41.25;
     final double START_LEFT_Y = 64;
@@ -392,6 +392,9 @@ public class SBA2 extends LinearOpMode {
                         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         lift.setPower(1);
                     })
+                    //
+                    // Cone 1
+                    //
                     // drive to C2
                     .splineToLinearHeading(new Pose2d(-LEFT_C2_X, -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
                     // reposition wrist and drop
@@ -408,6 +411,9 @@ public class SBA2 extends LinearOpMode {
                     // reposition wrist to BACK
                     .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
+                    //
+                    // CONE 1+1
+                    //
                     // move to stack for new cone
                     .setReversed(true)
                     .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
@@ -433,7 +439,7 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .back(2)
+
                     // lift to stack HIGH-1ch
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(STACK - CONE_HEIGHT * 1);
@@ -443,9 +449,12 @@ public class SBA2 extends LinearOpMode {
                     // flip wrist to BACK position
                     .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
+                    //
+                    // Cone 1+2
+                    //
                     // return to stack for new cone
                     .setReversed(true)
-                    .splineTo(new Vector2d(-LEFT_STACK_X+1, -LEFT_STACK_Y), Math.toRadians(180))
+                    .splineTo(new Vector2d(-LEFT_STACK_X-1, -LEFT_STACK_Y), Math.toRadians(180))
                     .setReversed(false)
                     .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                     .waitSeconds(0.5)
@@ -468,7 +477,7 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .back(2) // actually backing up
+
                     // lift to stack HIGH-2ch
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(STACK - CONE_HEIGHT * 2);
@@ -478,9 +487,12 @@ public class SBA2 extends LinearOpMode {
                     // flip wrist to BACK position
                     .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
 
+                    //
+                    // Cone 1+3
+                    //
                     // return to stack for cone 3
                     .setReversed(true)
-                    .splineTo(new Vector2d(-LEFT_STACK_X+2, -LEFT_STACK_Y), Math.toRadians(180))
+                    .splineTo(new Vector2d(-LEFT_STACK_X-2, -LEFT_STACK_Y), Math.toRadians(180))
                     .setReversed(false)
                     .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                     .waitSeconds(0.5)
@@ -503,7 +515,34 @@ public class SBA2 extends LinearOpMode {
                     // open intake and back up
                     .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                     .waitSeconds(0.5)
-                    .back(2)
+
+                    // lift to stack HIGH-2ch
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK - CONE_HEIGHT * 3);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // flip wrist to BACK position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
+
+                    //
+                    // Cone 1+3.5
+                    //
+                    // return to stack for cone 3
+                    .setReversed(true)
+                    .splineTo(new Vector2d(-LEFT_STACK_X-3, -LEFT_STACK_Y), Math.toRadians(180))
+                    .setReversed(false)
+                    .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
+                    .waitSeconds(0.5)
+                    // lift cone off of stack
+                    .addTemporalMarker(() -> {
+                        lift.setTargetPosition(STACK_SAFE);
+                        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        lift.setPower(1);
+                    })
+                    // reposition wrist to FRONT position
+                    .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
+
                     // lift to stack DRIVE
                     .addTemporalMarker(() -> {
                         lift.setTargetPosition(DRIVE);
