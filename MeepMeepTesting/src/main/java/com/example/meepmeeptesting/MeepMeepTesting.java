@@ -65,7 +65,16 @@ public class MeepMeepTesting {
                                 // open intake and back up
                                 .waitSeconds(0.5)
                                 .setReversed(true)
-                                .splineToLinearHeading(new Pose2d(60,-12, Math.toRadians(90)), Math.toRadians(0))
+                                .splineTo(new Vector2d(58, -11), Math.toRadians(0))
+                                .setReversed(false)
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to D3
+                                .splineTo(new Vector2d(32, -8), Math.toRadians(135.00))
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                .setReversed(true)
+                                .splineToLinearHeading(new Pose2d(12,-12, Math.toRadians(90)), Math.toRadians(0))
                                 .setReversed(false)
                                 //.strafeLeft(-23.99)
                                 .build()

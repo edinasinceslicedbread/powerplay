@@ -88,3 +88,7 @@ lint/tmp/
 *.hprof
 .java_pid59711.hprof.icloud
 *.icloud
+.DS_Store
+.DS_Store
+TeamCode/src/main/java/org/firstinspires/ftc/.DS_Store
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/.DS_Store

@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+// hi dad! (:  - E
 @Autonomous(name="Encoder Test X", group="Mark")
 public class EncoderTest extends LinearOpMode {
 

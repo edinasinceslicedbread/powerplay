@@ -203,8 +203,8 @@ public class SBA3 extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
-                // C2 D3 Left
-                telemetry.speak("C2 D3 Left Routine Begin");
+                // C2 B3 Left CHANGE*****
+                telemetry.speak("C2 B3 Left Routine Begin");
                 trajSeq = AutonomousTrajectories.trajectory_C2_D3_left(parkZone, drive, lift, wrist, intake);
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
