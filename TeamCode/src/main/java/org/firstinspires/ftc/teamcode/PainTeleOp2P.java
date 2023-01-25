@@ -66,7 +66,7 @@ public class PainTeleOp2P extends OpMode
     private MecanumDrive drive = null;
     private IMU imu = null;
     private GamepadEx driverOp, toolOp = null;
-    private LiftTool lift = null;
+    private DualLiftTool lift = null;
     private WristTool wrist = null;
     private IntakeTool intake = null;
     private int liftTarget,liftStartPos;
@@ -132,7 +132,7 @@ public class PainTeleOp2P extends OpMode
         toolOp = new GamepadEx(gamepad2);
 
         // init Lift
-        lift = new LiftTool();
+        lift = new DualLiftTool();
         lift.init(hardwareMap);
         liftTarget = DRIVE;
 

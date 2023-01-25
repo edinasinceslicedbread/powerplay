@@ -103,8 +103,10 @@ public class AutonomousOptions implements Serializable {
      * Where do we drop. Default is D3.
      */
     public enum DropLocation {
-        D3,
-        D2;
+        B2,
+        B3,
+        D2,
+        D3;
 
         public DropLocation getNext() {
             return values()[(ordinal() + 1) % values().length];
@@ -115,6 +117,7 @@ public class AutonomousOptions implements Serializable {
      * Pick which pole for the initial drop
      */
     public enum FirstDrop {
+        B2,
         C2,
         D2;
 

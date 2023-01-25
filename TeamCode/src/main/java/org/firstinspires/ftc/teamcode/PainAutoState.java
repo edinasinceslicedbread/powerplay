@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="SBA3", group="Autonomous")
-public class SBA3 extends LinearOpMode {
+@Autonomous(name="PainAutoState", group="Autonomous")
+public class PainAutoState extends LinearOpMode {
 
     // Menu initialization
     AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
@@ -192,27 +192,70 @@ public class SBA3 extends LinearOpMode {
         while (runtime.seconds() < delay) {
         }
 
+            // C2 D3 Right
         if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
-                // C2 D3 Right
                 telemetry.speak("C2 D3 Right Routine Begin");
                 trajSeq = AutonomousTrajectories.trajectory_C2_D3_right(parkZone, drive, lift, wrist, intake);
+
+            // C2 B3 Left
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
 
-                // C2 B3 Left CHANGE*****
                 telemetry.speak("C2 B3 Left Routine Begin");
-                trajSeq = AutonomousTrajectories.trajectory_C2_D3_left(parkZone, drive, lift, wrist, intake);
+                trajSeq = AutonomousTrajectories.trajectory_C2_B3_left(parkZone, drive, lift, wrist, intake);
+
+            // D2 D3 Right
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
-                // D2 D3 Left
-                telemetry.speak("Left Routine Begin");
-                trajSeq = AutonomousTrajectories.trajectory_C2_D3_left(parkZone, drive, lift, wrist, intake);
+                telemetry.speak("D2 D3 Right Routine Begin");
+                trajSeq = AutonomousTrajectories.trajectory_D2_D3_right(parkZone, drive, lift, wrist, intake);
+
+            // B2 B3 Left
+        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
+                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
+
+            telemetry.speak("B2 B3 Left Routine Begin");
+            trajSeq = AutonomousTrajectories.trajectory_B2_B3_left(parkZone, drive, lift, wrist, intake);
+
+            // C2 D2 Right
+        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
+                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
+
+            telemetry.speak("C2 D2 Right Routine Begin");
+            trajSeq = AutonomousTrajectories.trajectory_C2_D2_right(parkZone, drive, lift, wrist, intake);
+
+            // C2 B2 Left
+        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
+                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
+
+            telemetry.speak("C2 B2 Right Routine Begin");
+            trajSeq = AutonomousTrajectories.trajectory_C2_B2_left(parkZone, drive, lift, wrist, intake);
+
+            // D2 D2 Right
+        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
+                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
+
+            telemetry.speak("D2 D2 Right Routine Begin");
+            trajSeq = AutonomousTrajectories.trajectory_D2_D2_right(parkZone, drive, lift, wrist, intake);
+
+
+            // B2 B2 Left
+        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
+                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
+                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
+
+            telemetry.speak("B2 B2 Left Routine Begin");
+            trajSeq = AutonomousTrajectories.trajectory_B2_B2_left(parkZone, drive, lift, wrist, intake);
         }
         drive.followTrajectorySequence(trajSeq);
     }
