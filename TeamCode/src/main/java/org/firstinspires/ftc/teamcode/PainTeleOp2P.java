@@ -87,15 +87,15 @@ public class PainTeleOp2P extends OpMode
     final int LIFT_INCREMENT = 10;
 
     // intake constants
-    final double CLOSED = .75;
+    final double CLOSED = 1;
     final double OPEN = 0;
 
     // wrist constants
     double wristEndTime;
     double WRIST_DELAY=750;
 
-    final double FRONT = 0.03;
-    final double BACK = 1.03;
+    final double FRONT = 0.4;
+    final double BACK = 0.6;
 
     WristState wristState = WristState.NORMAL;
 
