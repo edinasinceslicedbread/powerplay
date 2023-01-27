@@ -100,7 +100,7 @@ public class PainTeleOp2P extends OpMode
     WristState wristState = WristState.NORMAL;
 
     // Change this to switch between FIELD_CENTRIC and Robot Centric
-    static final boolean FIELD_CENTRIC = false;
+    static final boolean FIELD_CENTRIC = true;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -277,7 +277,7 @@ public class PainTeleOp2P extends OpMode
         telemetry.addData("Speed", "Turbo Factor: " + turbo);
         telemetry.addData("Speed Limit", "Speed Limit: " +speed_limit);
         telemetry.addData("Lift Target", "Lift Target: "+liftTarget);
-        telemetry.addData("Lift Height", "Lift Height:"+lift.getCurrentPosition());
+        //telemetry.addData("Lift Height", "Lift Height:"+lift.getCurrentPosition());
     }
 
     /*

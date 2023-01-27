@@ -17,7 +17,7 @@ public class DualLiftTool {
         liftRear = new MotorEx(hwMap, "liftRear");
         liftRear.setInverted(false);
 
-        lift = new MotorGroup(liftFront, liftRear);
+        lift = new MotorGroup(liftRear, liftFront);
 
         lift.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         lift.setRunMode(MotorEx.RunMode.PositionControl);
