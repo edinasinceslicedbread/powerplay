@@ -13,7 +13,7 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot;
 
-        myBot = trajectory_C2_D2_right(meepMeep);
+        myBot = trajectory_D2_D3_right(meepMeep);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
@@ -35,6 +35,7 @@ public class MeepMeepTesting {
                     drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
                         // reposition wrist to front
                         // drive around D1
+                        .setTangent(-180)
                         .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
                         // raise lift to HIGH
                         // drive to C2
@@ -106,6 +107,7 @@ public class MeepMeepTesting {
                 drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
                     // reposition wrist to front
                     // drive around D1
+                    .setTangent(0)
                     .splineToSplineHeading(new Pose2d(-18, -59, Math.toRadians(90)), Math.toRadians(45))
                     // raise lift to HIGH
                     // drive to C2
@@ -114,6 +116,7 @@ public class MeepMeepTesting {
 
                     // back away from C2
                     .setReversed(true)
+                    .setTangent(90)
                     .splineToSplineHeading(new Pose2d(-18, -12, Math.toRadians(0)), Math.toRadians(180))
                     // lower lift to stack height
                     // move to stack for new cone
@@ -313,6 +316,7 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
                                 // reposition wrist to front
                                 // drive around D1
+                                .setTangent(-180)
                                 .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
                                 // raise lift to HIGH
                                 // drive to C2
