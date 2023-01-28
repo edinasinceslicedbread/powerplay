@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 @Config
-public class DriveConstants {
+public class BradDriveConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -32,8 +32,8 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(8, 0, 5,
-            11);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(15, 0, 4,
+            13.01);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -45,7 +45,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.88976; // in
     public static double GEAR_RATIO = 1.00; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 8.11; // in
+    public static double TRACK_WIDTH = 8; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -64,10 +64,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 42;
+    public static double MAX_VEL = 40;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(90);
-    public static double MAX_ANG_ACCEL = Math.toRadians(90); //
+    public static double MAX_ANG_VEL = Math.toRadians(200);  //300
+    public static double MAX_ANG_ACCEL = Math.toRadians(40); //
 
 
     public static double encoderTicksToInches(double ticks) {

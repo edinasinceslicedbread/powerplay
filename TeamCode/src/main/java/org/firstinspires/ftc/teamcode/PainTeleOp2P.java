@@ -73,29 +73,30 @@ public class PainTeleOp2P extends OpMode
     private double intakeTarget,wristTarget;
 
     // drive constants
-    double turbo = 0.6;
-    final double TURBO_BASE = 0.6;
+    double turbo = 0.7;
+    final double TURBO_BASE = 0.7;
     private double speed_limit = 1.0;
-    double LIMIT_RAMP = .6;
+    double LIMIT_RAMP = 0.7;
 
     // lift constants
-    final int HIGH = 2900;
-    final int MEDIUM = 2100;
-    final int LOW = 1250;
+    final int MAX = 3000;
+    final int HIGH = 2825;
+    final int MEDIUM = 2025;
+    final int LOW = 1175;
     final int DRIVE = 0;
     final int MIN_WRIST = 350;
-    final int LIFT_INCREMENT = 10;
+    final int LIFT_INCREMENT = 15;
 
     // intake constants
-    final double CLOSED = 1;
+    final double CLOSED = .6;
     final double OPEN = 0;
 
     // wrist constants
     double wristEndTime;
     double WRIST_DELAY=750;
 
-    final double FRONT = 0.4;
-    final double BACK = 0.6;
+    final double FRONT = 0.25;
+    final double BACK = 0.91;
 
     WristState wristState = WristState.NORMAL;
 
@@ -121,11 +122,13 @@ public class PainTeleOp2P extends OpMode
 
         // Initialize and Orient IMU
         imu = hardwareMap.get(IMU.class, "imu");
+
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
 
         // the extended gamepad object
         driverOp = new GamepadEx(gamepad1);
@@ -194,7 +197,7 @@ public class PainTeleOp2P extends OpMode
 
         driverOp.readButtons();
         toolOp.readButtons();
-
+/*
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
             wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
@@ -203,6 +206,15 @@ public class PainTeleOp2P extends OpMode
             } else {    // Lift is unsafe, lift and flip and drop
                 liftStartPos = liftTarget;
                 wristState = WristState.LIFT;
+            }
+        }
+        */
+
+        // Back and Front Toggle Wrist
+        if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+            if (liftTarget > DRIVE + MIN_WRIST) {                   // Lift is in a safe position for wrist flip
+                wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
+                wristState = WristState.NORMAL;
             }
         }
 
@@ -223,6 +235,11 @@ public class PainTeleOp2P extends OpMode
         // move the tool parts
         lift.moveAbsolute(liftTarget);
         intake.moveAbsolute(intakeTarget);
+/*
+        if (wristState != WristState.NORMAL && System.nanoTime() > wristEndTime+3) {
+            wristState = WristState.NORMAL;
+        }
+*/
 
         switch(wristState) {
             case NORMAL:
@@ -230,7 +247,7 @@ public class PainTeleOp2P extends OpMode
                 break;
             case LIFT:
                 liftTarget = MIN_WRIST;
-                if (lift.getCurrentPosition()>=MIN_WRIST) {
+                if (lift.liftFront.getCurrentPosition()>=MIN_WRIST) {
                     wristState = WristState.FLIP;
                     wristEndTime = System.nanoTime() + 1E6 * WRIST_DELAY;
                 }
@@ -244,14 +261,14 @@ public class PainTeleOp2P extends OpMode
                 break;
             case DROP:
                 liftTarget = liftStartPos;
-                if(lift.getCurrentPosition()==liftTarget) {
+                if(lift.liftFront.getCurrentPosition()==liftTarget) {
                     wristState = WristState.NORMAL;
                 }
                 break;
         }
 
         // calculate drive parameters
-        turbo = TURBO_BASE + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/4) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/3);
+        turbo = TURBO_BASE + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/3) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/5);
         speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
         drive.setRange(-speed_limit, speed_limit);
 
@@ -260,7 +277,7 @@ public class PainTeleOp2P extends OpMode
                     driverOp.getLeftX() * turbo,
                     driverOp.getLeftY() * turbo,
                     driverOp.getRightX() * turbo,
-                    false
+                    true
             );
         } else {
             drive.driveFieldCentric(
@@ -277,6 +294,7 @@ public class PainTeleOp2P extends OpMode
         telemetry.addData("Speed", "Turbo Factor: " + turbo);
         telemetry.addData("Speed Limit", "Speed Limit: " +speed_limit);
         telemetry.addData("Lift Target", "Lift Target: "+liftTarget);
+        telemetry.addData("Wrist Target", "Wrist Target:"+ wrist.getPosition());
         //telemetry.addData("Lift Height", "Lift Height:"+lift.getCurrentPosition());
     }
 

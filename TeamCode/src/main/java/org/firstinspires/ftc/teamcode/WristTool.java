@@ -14,14 +14,11 @@ public class WristTool {
     }
 
     public void moveAbsolute(double target) {
-
-        if (target>1) {
-            target = 1;
-        } else if (target<0) {
-            target = 0;
-        }
-
         wrist.setPosition(target);
+    }
+
+    public double getPosition() {
+        return wrist.getPosition();
     }
 
     public void moveMaxRange() {
