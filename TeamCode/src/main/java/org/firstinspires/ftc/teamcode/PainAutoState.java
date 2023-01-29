@@ -36,10 +36,10 @@ public class PainAutoState extends LinearOpMode {
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
-    double fx = 1430;
-    double fy = 1430;
-    double cx = 480;
-    double cy = 620;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
     // UNITS ARE METERS
     double tagsize = 0.0444;
@@ -96,7 +96,7 @@ public class PainAutoState extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
