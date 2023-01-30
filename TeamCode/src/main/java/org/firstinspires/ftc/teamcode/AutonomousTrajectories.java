@@ -58,7 +58,7 @@ public final class AutonomousTrajectories {
     // C2-D3 Right
     // Code Status: Yes
     // Test Status: No
-    public static TrajectorySequence trajectory_C2_D3_right(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_C2_D3(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
 
         // set start position
         Pose2d startPose = new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90));
@@ -250,7 +250,7 @@ public final class AutonomousTrajectories {
     // C2-B3 Left
     // Code Status: Yes
     // Test Status: No
-    public static TrajectorySequence trajectory_C2_B3_left(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_C2_B3(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
         // set start pose
         Pose2d startPose = new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
@@ -440,7 +440,7 @@ public final class AutonomousTrajectories {
     // D2-D3 Right
     // Code Status: Yes
     // Test Status: No
-    public static TrajectorySequence trajectory_D2_D3_right(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_D2_D3(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
 
         // set start position
         Pose2d startPose = new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90));
@@ -646,7 +646,7 @@ public final class AutonomousTrajectories {
     // B2-B3 Left
     // Code Status: In Progress
     // Test Status: No
-    public static TrajectorySequence trajectory_B2_B3_left(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_B2_B3(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
 
         //To do: Change to Left routine
         //To do: Change comments to B2 B3
@@ -856,7 +856,7 @@ public final class AutonomousTrajectories {
     // D2-D2 Right
     // Code Status: No
     // Test Status: No
-    public static TrajectorySequence trajectory_D2_D2_right(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_D2_D2(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
 
         // set start position
         Pose2d startPose = new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90));
@@ -874,7 +874,7 @@ public final class AutonomousTrajectories {
     // B2-B2 Left
     // Code Status: No
     // Test Status: No
-    public static TrajectorySequence trajectory_B2_B2_left(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
+    public static TrajectorySequence trajectory_B2_B2(double parkZone, SampleMecanumDrive drive, DcMotor lift, WristTool wrist, IntakeTool intake) {
 
         // set start position
         Pose2d startPose = new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90));

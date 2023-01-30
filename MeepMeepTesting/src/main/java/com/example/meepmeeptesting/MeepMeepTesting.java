@@ -45,7 +45,14 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot;
 
-        myBot = trajectory_C2_B2(meepMeep);
+        //myBot = trajectory_C2_D3(meepMeep);
+        //myBot = trajectory_C2_B3(meepMeep);
+        //myBot = trajectory_D2_D3(meepMeep);
+        myBot = trajectory_B2_B3(meepMeep);
+        //myBot = trajectory_C2_D2(meepMeep);
+        //myBot = trajectory_C2_B2(meepMeep);
+        //myBot = trajectory_D2_D2(meepMeep);
+        //myBot = trajectory_B2_B2(meepMeep);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
@@ -277,7 +284,7 @@ public class MeepMeepTesting {
     }
 
     // LEFT B2-B3
-    //
+    // Fast Spline - 1/27
     // Implemented - no
     public static RoadRunnerBotEntity trajectory_B2_B3(MeepMeep meepMeep) {
 
@@ -496,22 +503,87 @@ public class MeepMeepTesting {
     }
 
     // RIGHT D2-D2
-    // NOTE: stub only
+    // Fast Spline - 1/29
+    // Implemented - no
     public static RoadRunnerBotEntity trajectory_D2_D2(MeepMeep meepMeep) {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
-                .setDimensions(12.5,16)
+                .setDimensions(12.5, 16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
+                                // reposition wrist to front
+                                // drive around D1
+                                .setTangent(-180)
+                                .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
+                                // raise lift to HIGH
+                                // drive to D2
+                                .splineToSplineHeading(new Pose2d(15, -30, Math.toRadians(180)), Math.toRadians(90))
+
+                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(90))
+                                // Open intake
+                                .waitSeconds(1)
+
+                                // Strafe away from D2 and line up for RIGHT STACK
+                                .setReversed(true)
+                                .setTangent(Math.toRadians(110))
+                                .splineToSplineHeading(new Pose2d(18, -10, Math.toRadians(180)), Math.toRadians(0))
+                                // lower lift to stack height
+
+                                // move to stack for new cone
+                                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -RIGHT_STACK_Y, Math.toRadians(180)), Math.toRadians(0))
+                                .setReversed(false)
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to D2
+                                .splineTo(new Vector2d(RIGHT_D2_X, -RIGHT_D2_Y), Math.toRadians(225.00))
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                // return to RIGHT STACK for new cone
+                                .setReversed(true)
+                                .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                                .setReversed(false)
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to D2
+                                .splineTo(new Vector2d(RIGHT_D2_X, -RIGHT_D2_Y), Math.toRadians(225.00))
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                // return to RIGHT STACK for new cone
+                                .setReversed(true)
+                                .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                                .setReversed(false)
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to D2
+                                .splineTo(new Vector2d(RIGHT_D2_X, -RIGHT_D2_Y), Math.toRadians(225.00))
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                // return to RIGHT STACK for new cone
+                                .setReversed(true)
+                                .splineTo(new Vector2d(RIGHT_STACK_X, -RIGHT_STACK_Y), Math.toRadians(0))
+                                .setReversed(false)
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to D2
+                                .splineTo(new Vector2d(RIGHT_D2_X, -RIGHT_D2_Y), Math.toRadians(225.00))
+                                // open intake and back up
+                                .waitSeconds(0.5)
+
+                                // Park
+                                .setReversed(true)
+                                .splineToLinearHeading(new Pose2d(12, -12, Math.toRadians(90)), Math.toRadians(0))
+                                .setReversed(false)
+
                                 .build()
                 );
         return myBot;
     }
 
     // RIGHT B2-B2
-    // NOTE: stub only
+    // Fast Spline - 1/29
+    // Implemented - no
     public static RoadRunnerBotEntity trajectory_B2_B2(MeepMeep meepMeep) {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
@@ -519,7 +591,66 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5,16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))                                // reposition wrist to front
+                                // INTERMEDIATE - Go around pole at B1
+                                .setTangent(0)
+                                .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(45))
+                                // raise lift to HIGH
+                                // INTERMEDIATE - line up for B2
+                                .splineToSplineHeading(new Pose2d(-15, -30, Math.toRadians(180)), Math.toRadians(90))
+
+                                // Line up on right side of B2
+                                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(90))
+                                .waitSeconds(1)
+
+                                // Strafe away from B2 and line up for LEFT STACK
+                                .setTangent(Math.toRadians(70))
+                                .splineToSplineHeading(new Pose2d(-20, -12, Math.toRadians(180)), Math.toRadians(180))
+                                // Drive to LEFT STACK
+                                .splineToSplineHeading(new Pose2d(-LEFT_STACK_X, -LEFT_STACK_Y, Math.toRadians(180)), Math.toRadians(180))
+                                .waitSeconds(1)
+
+                                // drive to B2
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-LEFT_B2_X, -LEFT_B2_Y), Math.toRadians(-45.00))
+                                .setReversed(false)
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                // return to stack for new cone
+                                .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to B2
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-LEFT_B2_X, -LEFT_B2_Y), Math.toRadians(-45.00))
+                                .setReversed(false)
+                                // open intake and back up
+                                .waitSeconds(0.5)
+                                // return to stack for new cone
+                                .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
+                                // Grab cone
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to B2
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-LEFT_B2_X, -LEFT_B2_Y), Math.toRadians(-45.00))
+                                .setReversed(false)
+                                // open intake
+                                .waitSeconds(0.5)
+                                // return to stack for new cone
+                                .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
+                                .waitSeconds(1)
+                                // reposition wrist
+                                // drive to B2
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-LEFT_B2_X, -LEFT_B2_Y), Math.toRadians(-45.00))
+                                .setReversed(false)
+                                // open intake and back up
+                                .waitSeconds(0.5)
+
+                                // Park
+                                .splineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(90)), Math.toRadians(0))
+
                                 .build()
                 );
         return myBot;
