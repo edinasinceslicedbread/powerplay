@@ -198,6 +198,7 @@ public class PainTeleOp2P extends OpMode
         driverOp.readButtons();
         toolOp.readButtons();
 /*
+        // TODO: Fix Wrist Flip
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
             wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
@@ -227,6 +228,8 @@ public class PainTeleOp2P extends OpMode
         if (toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) == 1) {
             intakeTarget = CLOSED;
         }
+
+        // TODO: Implement Z-Axis reset
 
         // Manually adjusts lift
         liftTarget = liftTarget + (int)(toolOp.getLeftY()*LIFT_INCREMENT);
