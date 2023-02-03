@@ -48,9 +48,9 @@ public class MeepMeepTesting {
         //myBot = trajectory_C2_D3(meepMeep);
         //myBot = trajectory_C2_B3(meepMeep);
         //myBot = trajectory_D2_D3(meepMeep);
-        myBot = trajectory_B2_B3(meepMeep);
+        //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
-        //myBot = trajectory_C2_B2(meepMeep);
+        myBot = trajectory_C2_B2(meepMeep);
         //myBot = trajectory_D2_D2(meepMeep);
         //myBot = trajectory_B2_B2(meepMeep);
 
@@ -71,7 +71,7 @@ public class MeepMeepTesting {
             .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
             .setDimensions(12.5, 16)
             .followTrajectorySequence(drive ->
-                    drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
+                    drive.trajectorySequenceBuilder(new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90)))
                         // reposition wrist to front
                         // drive around D1
                         .setTangent(-180)
@@ -144,11 +144,11 @@ public class MeepMeepTesting {
             .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
             .setDimensions(12.5,16)
             .followTrajectorySequence(drive ->
-                drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
+                drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90)))
                     // reposition wrist to front
                     // drive around D1
-                    .setTangent(0)
-                    .splineToSplineHeading(new Pose2d(-18, -59, Math.toRadians(90)), Math.toRadians(45))
+                    .setTangent(45)
+                    .splineToSplineHeading(new Pose2d(-24, -60, Math.toRadians(90)), Math.toRadians(0))
                     // raise lift to HIGH
                     // drive to C2
                     .splineToSplineHeading(new Pose2d(-LEFT_C2_X, -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
@@ -218,7 +218,7 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5, 16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90)))
                                 // reposition wrist to front
                                 // drive around D1
                                 .setTangent(-180)
@@ -293,7 +293,7 @@ public class MeepMeepTesting {
             .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
             .setDimensions(12.5,16)
             .followTrajectorySequence(drive ->
-                drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))                                // reposition wrist to front
+                drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90)))                                // reposition wrist to front
                         .setTangent(0)
                         .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(45))
                         // raise lift to HIGH
@@ -366,7 +366,7 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5, 16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90)))
                                 // reposition wrist to front
                                 // drive around D1
                                 .setTangent(-180)
@@ -439,11 +439,12 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5,16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_RIGHT_Y, Math.toRadians(90)))
                                 // reposition wrist to front
                                 // drive around D1
-                                .setTangent(-5)
-                                .splineToSplineHeading(new Pose2d(-18, -59, Math.toRadians(90)), Math.toRadians(45))
+
+                                .setTangent(45)
+                                .splineToSplineHeading(new Pose2d(-24, -60, Math.toRadians(90)), Math.toRadians(0))
                                 // raise lift to HIGH
                                 // drive to C2
                                 .splineToSplineHeading(new Pose2d(-LEFT_C2_X, -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
@@ -512,7 +513,7 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5, 16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(32, -64, Math.toRadians(90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(START_RIGHT_X, -START_RIGHT_Y, Math.toRadians(90)))
                                 // reposition wrist to front
                                 // drive around D1
                                 .setTangent(-180)
@@ -591,7 +592,7 @@ public class MeepMeepTesting {
                 .setConstraints(51, 30, Math.toRadians(300), Math.toRadians(60), 8)
                 .setDimensions(12.5,16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-42, -64, Math.toRadians(90)))                                // reposition wrist to front
+                        drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90)))                                // reposition wrist to front
                                 // INTERMEDIATE - Go around pole at B1
                                 .setTangent(0)
                                 .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(45))
