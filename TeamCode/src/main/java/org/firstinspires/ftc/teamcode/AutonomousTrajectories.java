@@ -98,6 +98,7 @@ public final class AutonomousTrajectories {
                 .waitSeconds(0.5)
 
                 .setReversed(true)
+                .setTangent(70)
                 .splineToSplineHeading(new Pose2d(22, -12, Math.toRadians(180)), Math.toRadians(0))
                 // lower lift to stack height
                 .addTemporalMarker(() -> {
@@ -477,8 +478,8 @@ public final class AutonomousTrajectories {
                 // Cone 1
                 //
                 // drive to D2
-                .splineToSplineHeading(new Pose2d(15, -30, Math.toRadians(180)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
                 // reposition wrist and drop
                 .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -674,8 +675,8 @@ public final class AutonomousTrajectories {
                 // reposition wrist to FRONT
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 // drive around D1
-                .setTangent(-180)
-                .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(135))
+                .setTangent(45)
+                .splineToSplineHeading(new Pose2d(-23, -60, Math.toRadians(90)), Math.toRadians(0))
                 // reposition wrist to FRONT
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 // raise lift to MEDIUM
@@ -688,8 +689,8 @@ public final class AutonomousTrajectories {
                 // Cone 1
                 //
                 // drive to D2
-                .splineToSplineHeading(new Pose2d(-15, -30, Math.toRadians(180)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-12, -30, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(135))
                 // reposition wrist and drop
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -901,8 +902,8 @@ public final class AutonomousTrajectories {
                 // Cone 1
                 //
                 // drive to D2
-                .splineToSplineHeading(new Pose2d(15, -30, Math.toRadians(180)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
                 // reposition wrist and drop
                 .addTemporalMarker(() -> wrist.moveAbsolute(BACK))
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -1084,8 +1085,8 @@ public final class AutonomousTrajectories {
                 // reposition wrist to FRONT
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 // drive around D1
-                .setTangent(-180)
-                .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(135))
+                .setTangent(45)
+                .splineToSplineHeading(new Pose2d(-23, -60, Math.toRadians(90)), Math.toRadians(0))
                 // reposition wrist to FRONT
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 // raise lift to MEDIUM
@@ -1098,8 +1099,8 @@ public final class AutonomousTrajectories {
                 // Cone 1
                 //
                 // drive to D2
-                .splineToSplineHeading(new Pose2d(-15, -30, Math.toRadians(180)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-12, -30, Math.toRadians(180)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(135))
                 // reposition wrist and drop
                 .addTemporalMarker(() -> wrist.moveAbsolute(FRONT))
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -1298,7 +1299,8 @@ public final class AutonomousTrajectories {
                 .waitSeconds(0.5)
 
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(22, -12, Math.toRadians(180)), Math.toRadians(0))
+                .setTangent(Math.toRadians(70))
+                .splineToSplineHeading(new Pose2d(18, -10, Math.toRadians(180)), Math.toRadians(0))
                 // lower lift to stack height
                 .addTemporalMarker(() -> {
                     lift.setTargetPosition(STACK);
@@ -1491,7 +1493,8 @@ public final class AutonomousTrajectories {
                 .waitSeconds(0.5)
 
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-22, -12, Math.toRadians(0)), Math.toRadians(180))
+                .setTangent(90)
+                .splineToSplineHeading(new Pose2d(-18, -12, Math.toRadians(0)), Math.toRadians(180))
                 // lower lift to stack height
                 .addTemporalMarker(() -> {
                     lift.setTargetPosition(STACK);

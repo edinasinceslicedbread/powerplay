@@ -50,9 +50,9 @@ public class MeepMeepTesting {
         //myBot = trajectory_D2_D3(meepMeep);
         //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
-        myBot = trajectory_C2_B2(meepMeep);
+        //myBot = trajectory_C2_B2(meepMeep);
         //myBot = trajectory_D2_D2(meepMeep);
-        //myBot = trajectory_B2_B2(meepMeep);
+        myBot = trajectory_B2_B2(meepMeep);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
@@ -222,12 +222,12 @@ public class MeepMeepTesting {
                                 // reposition wrist to front
                                 // drive around D1
                                 .setTangent(-180)
-                                .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
+                                .splineToSplineHeading(new Pose2d(15, -57, Math.toRadians(90)), Math.toRadians(135))
                                 // raise lift to HIGH
                                 // drive to D2
-                                .splineToSplineHeading(new Pose2d(15, -30, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
 
-                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(90))
                                 .waitSeconds(1)
                                 // back away from D2
 
@@ -294,13 +294,12 @@ public class MeepMeepTesting {
             .setDimensions(12.5,16)
             .followTrajectorySequence(drive ->
                 drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90)))                                // reposition wrist to front
-                        .setTangent(0)
-                        .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(45))
+                        .setTangent(45)
+                        .splineToSplineHeading(new Pose2d(-23, -60, Math.toRadians(90)), Math.toRadians(0))
                         // raise lift to HIGH
                         // drive to D2
-                        .splineToSplineHeading(new Pose2d(-15, -30, Math.toRadians(180)), Math.toRadians(90))
-
-                        .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(90))
+                        .splineToSplineHeading(new Pose2d(-12, -30, Math.toRadians(180)), Math.toRadians(90))
+                        .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(135))
                         .waitSeconds(1)
                         // back away from D2
 
@@ -520,13 +519,12 @@ public class MeepMeepTesting {
                                 .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
                                 // raise lift to HIGH
                                 // drive to D2
-                                .splineToSplineHeading(new Pose2d(15, -30, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
 
-                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(90))
-                                // Open intake
                                 .waitSeconds(1)
+                                // back away from D2
 
-                                // Strafe away from D2 and line up for RIGHT STACK
                                 .setReversed(true)
                                 .setTangent(Math.toRadians(110))
                                 .splineToSplineHeading(new Pose2d(18, -10, Math.toRadians(180)), Math.toRadians(0))
@@ -594,17 +592,15 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-START_LEFT_X, -START_LEFT_Y, Math.toRadians(90)))                                // reposition wrist to front
                                 // INTERMEDIATE - Go around pole at B1
-                                .setTangent(0)
-                                .splineToSplineHeading(new Pose2d(-17, -57, Math.toRadians(90)), Math.toRadians(45))
+                                .setTangent(45)
+                                .splineToSplineHeading(new Pose2d(-23, -60, Math.toRadians(90)), Math.toRadians(0))
                                 // raise lift to HIGH
-                                // INTERMEDIATE - line up for B2
-                                .splineToSplineHeading(new Pose2d(-15, -30, Math.toRadians(180)), Math.toRadians(90))
-
-                                // Line up on right side of B2
-                                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(90))
+                                // drive to D2
+                                .splineToSplineHeading(new Pose2d(-12, -30, Math.toRadians(180)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(-RIGHT_B2_X, -RIGHT_B2_Y, Math.toRadians(180)), Math.toRadians(135))
                                 .waitSeconds(1)
+                                // back away from D2
 
-                                // Strafe away from B2 and line up for LEFT STACK
                                 .setTangent(Math.toRadians(70))
                                 .splineToSplineHeading(new Pose2d(-20, -12, Math.toRadians(180)), Math.toRadians(180))
                                 // Drive to LEFT STACK
