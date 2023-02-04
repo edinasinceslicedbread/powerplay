@@ -54,7 +54,7 @@ public class PainAutoState extends LinearOpMode {
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
     // parking constants
-    final double ZONE_ONE = 24;
+    final double ZONE_ONE = 28;
     final double ZONE_TWO = 0;
     final double ZONE_THREE = -24;
 
@@ -197,7 +197,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
-                telemetry.speak("C2 D3 Right Routine Begin");
                 trajSeq = AutonomousTrajectories.trajectory_C2_D3(parkZone, drive, lift, wrist, intake);
 
             // C2 B3 Left
@@ -205,7 +204,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
 
-                telemetry.speak("C2 B3 Left Routine Begin");
                 trajSeq = AutonomousTrajectories.trajectory_C2_B3(parkZone, drive, lift, wrist, intake);
 
             // D2 D3 Right
@@ -213,7 +211,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
-                telemetry.speak("D2 D3 Right Routine Begin");
                 trajSeq = AutonomousTrajectories.trajectory_D2_D3(parkZone, drive, lift, wrist, intake);
 
             // B2 B3 Left
@@ -221,7 +218,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
 
-            telemetry.speak("B2 B3 Left Routine Begin");
             trajSeq = AutonomousTrajectories.trajectory_B2_B3(parkZone, drive, lift, wrist, intake);
 
             // C2 D2 Right
@@ -229,7 +225,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
 
-            telemetry.speak("C2 D2 Right Routine Begin");
             trajSeq = AutonomousTrajectories.trajectory_C2_D2(parkZone, drive, lift, wrist, intake);
 
             // C2 B2 Left
@@ -237,7 +232,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
 
-            telemetry.speak("C2 B2 Right Routine Begin");
             trajSeq = AutonomousTrajectories.trajectory_C2_B2(parkZone, drive, lift, wrist, intake);
 
             // D2 D2 Right
@@ -245,7 +239,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
 
-            telemetry.speak("D2 D2 Right Routine Begin");
             trajSeq = AutonomousTrajectories.trajectory_D2_D2(parkZone, drive, lift, wrist, intake);
 
 
@@ -254,7 +247,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
 
-            telemetry.speak("B2 B2 Left Routine Begin");
             trajSeq = AutonomousTrajectories.trajectory_B2_B2(parkZone, drive, lift, wrist, intake);
         }
         drive.followTrajectorySequence(trajSeq);
