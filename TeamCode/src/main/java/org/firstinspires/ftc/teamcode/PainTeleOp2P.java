@@ -197,7 +197,7 @@ public class PainTeleOp2P extends OpMode
 
         driverOp.readButtons();
         toolOp.readButtons();
-/*
+
         // TODO: Fix Wrist Flip
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -209,8 +209,9 @@ public class PainTeleOp2P extends OpMode
                 wristState = WristState.LIFT;
             }
         }
-        */
 
+
+        /*
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
             if (liftTarget > DRIVE + MIN_WRIST) {                   // Lift is in a safe position for wrist flip
@@ -218,6 +219,7 @@ public class PainTeleOp2P extends OpMode
                 wristState = WristState.NORMAL;
             }
         }
+        */
 
         // Eject
         if (toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 1) {
@@ -238,33 +240,39 @@ public class PainTeleOp2P extends OpMode
         // move the tool parts
         lift.moveAbsolute(liftTarget);
         intake.moveAbsolute(intakeTarget);
-/*
-        if (wristState != WristState.NORMAL && System.nanoTime() > wristEndTime+3) {
+
+        // Wrist Flip timeout - if 5 seconds have passed and wrist flip hasn't completed, reset to NORMAL operation
+        if (wristState != WristState.NORMAL && System.nanoTime() > wristEndTime+5) {
             wristState = WristState.NORMAL;
         }
-*/
 
+        // State machine to operate wrist flip
         switch(wristState) {
-            case NORMAL:
+            case NORMAL: // Normal wrist operation - lift is above minimum safe flip
                 wrist.moveAbsolute(wristTarget);
                 break;
-            case LIFT:
-                liftTarget = MIN_WRIST;
-                if (lift.liftFront.getCurrentPosition()>=MIN_WRIST) {
+            case LIFT: // Low-level wrist flip step 1
+                // if below MIN_WRIST, set liftTarget to MIN_WRIST
+                if (liftTarget < MIN_WRIST) {
+                    liftTarget = MIN_WRIST;
+                }
+
+                // if reached liftTarget, set timer and advance state
+                if (lift.liftFront.getCurrentPosition()==liftTarget) {
                     wristState = WristState.FLIP;
                     wristEndTime = System.nanoTime() + 1E6 * WRIST_DELAY;
                 }
                 break;
-            case FLIP:
-                if (System.nanoTime() > wristEndTime) {
+            case FLIP: // Low-level wrist flip step 2
+                if (System.nanoTime() > wristEndTime) { // if time has expired, advance state
                     wristState = WristState.DROP;
-                } else {
+                } else { // move wrist
                     wrist.moveAbsolute(wristTarget);
                 }
                 break;
-            case DROP:
-                liftTarget = liftStartPos;
-                if(lift.liftFront.getCurrentPosition()==liftTarget) {
+            case DROP: // Low-level wrist flip final step
+                liftTarget = liftStartPos; // move lift back to where we started
+                if(lift.liftFront.getCurrentPosition()==liftTarget) { // when we reach original start point, exit state machine
                     wristState = WristState.NORMAL;
                 }
                 break;
