@@ -195,9 +195,15 @@ public class PainTeleOp2P extends OpMode
             liftTarget = DRIVE;
         }
 
+        // Set lift to MIN_WRIST height
+        if (toolOp.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
+            liftTarget = MIN_WRIST;
+        }
+
         driverOp.readButtons();
         toolOp.readButtons();
 
+        /*
         // TODO: Fix Wrist Flip
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -209,17 +215,13 @@ public class PainTeleOp2P extends OpMode
                 wristState = WristState.LIFT;
             }
         }
+         */
 
-
-        /*
         // Back and Front Toggle Wrist
         if (toolOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
-            if (liftTarget > DRIVE + MIN_WRIST) {                   // Lift is in a safe position for wrist flip
-                wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
-                wristState = WristState.NORMAL;
-            }
+            wristTarget = (wristTarget == FRONT) ? BACK : FRONT;
+            wristState = WristState.NORMAL;
         }
-        */
 
         // Eject
         if (toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 1) {
@@ -241,10 +243,13 @@ public class PainTeleOp2P extends OpMode
         lift.moveAbsolute(liftTarget);
         intake.moveAbsolute(intakeTarget);
 
+        /*
         // Wrist Flip timeout - if 5 seconds have passed and wrist flip hasn't completed, reset to NORMAL operation
         if (wristState != WristState.NORMAL && System.nanoTime() > wristEndTime+5) {
             wristState = WristState.NORMAL;
         }
+         */
+
 
         // State machine to operate wrist flip
         switch(wristState) {
