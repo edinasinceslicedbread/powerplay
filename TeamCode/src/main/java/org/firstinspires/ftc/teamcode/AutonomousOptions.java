@@ -12,20 +12,10 @@ public class AutonomousOptions implements Serializable {
     private static final long serialVersionUID = 7829136421241571165L;
 
     private int delayStartSeconds;
-    private AllianceColor allianceColor;
     private StartPosition startPosition;
     private DropLocation droplocation;
     private FirstDrop firstDrop;
-    private PlaceConeInTerminal placeConeInTerminal;
-    private PlaceConesOnJunctions placeConesOnJunctions;
 
-    public AllianceColor getAllianceColor() {
-        return allianceColor;
-    }
-
-    public void setAllianceColor(AllianceColor allianceColor) {
-        this.allianceColor = allianceColor;
-    }
 
     public StartPosition getStartPosition() {
         return startPosition;
@@ -51,41 +41,12 @@ public class AutonomousOptions implements Serializable {
         this.firstDrop = firstDrop;
     }
 
-    public PlaceConeInTerminal getPlaceConeInTerminal() {
-        return placeConeInTerminal;
-    }
-
-    public void setPlaceConeInTerminal(PlaceConeInTerminal placeConeInTerminal) {
-        this.placeConeInTerminal = placeConeInTerminal;
-    }
-
-    public PlaceConesOnJunctions getPlaceConesOnJunctions() {
-        return placeConesOnJunctions;
-    }
-
-    public void setPlaceConesOnJunctions(PlaceConesOnJunctions placeConesOnJunctions) {
-        this.placeConesOnJunctions = placeConesOnJunctions;
-    }
-
     public int getDelayStartSeconds() {
         return delayStartSeconds;
     }
 
     public void setDelayStartSeconds(int delayStartSeconds) {
         this.delayStartSeconds = delayStartSeconds;
-    }
-
-    public String toString() {
-        return "AllianceColor: " + getAllianceColor().toString() + "\nStartLocation: " + getStartPosition().toString();
-    }
-
-    /*
-     * Alliance color. Default to None so driver must select it.
-     */
-    public enum AllianceColor {
-        None,
-        Red,
-        Blue
     }
 
     /*
@@ -126,29 +87,4 @@ public class AutonomousOptions implements Serializable {
         }
     }
 
-    /*
-     * Yes means place cones on the junctions.
-     * Default is No.
-     */
-    public enum PlaceConesOnJunctions {
-        No,
-        Yes;
-
-        public PlaceConesOnJunctions getNext() {
-            return values()[(ordinal() + 1) % values().length];
-        }
-    }
-
-    /*
-     * Yes means place cone in the terminal.
-     *  No is the default.
-     */
-    public enum PlaceConeInTerminal {
-        No,
-        Yes;
-
-        public PlaceConeInTerminal getNext() {
-            return values()[(ordinal() + 1) % values().length];
-        }
-    }
 }

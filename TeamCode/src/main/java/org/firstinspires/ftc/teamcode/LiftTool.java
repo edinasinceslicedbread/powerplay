@@ -29,7 +29,7 @@ public class LiftTool {
     public void moveAbsolute(int target) {
 
         // Set some guardrails
-        target = MathUtils.clamp(target, 0, 2900);
+        target = MathUtils.clamp(target, 0, 3100);
 
         lift.setTargetPosition(target);
 
@@ -42,7 +42,7 @@ public class LiftTool {
     }
 
     public void moveMaxRange() {
-        moveAbsolute(2900);
+        moveAbsolute(3100);
     }
 
     public void moveMinRange() {

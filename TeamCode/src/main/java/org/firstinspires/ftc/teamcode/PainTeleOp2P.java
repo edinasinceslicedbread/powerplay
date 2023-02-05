@@ -311,7 +311,6 @@ public class PainTeleOp2P extends OpMode
         telemetry.addData("Speed Limit", "Speed Limit: " +speed_limit);
         telemetry.addData("Lift Target", "Lift Target: "+liftTarget);
         telemetry.addData("Wrist Target", "Wrist Target:"+ wrist.getPosition());
-        //telemetry.addData("Lift Height", "Lift Height:"+lift.getCurrentPosition());
     }
 
     /*

@@ -188,53 +188,52 @@ public class PainAutoState extends LinearOpMode {
         waitForStart();
 
         // do a starting delay if requested
-        double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
-        while (runtime.seconds() < delay) {
-        }
+        //double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
+        //while (runtime.seconds() < delay) {
+        //}
 
-            // C2 D3 Right
+        // C2 D3
         if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
                 trajSeq = AutonomousTrajectories.trajectory_C2_D3(parkZone, drive, lift, wrist, intake);
 
-            // C2 B3 Left
+        // C2 B3
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
 
                 trajSeq = AutonomousTrajectories.trajectory_C2_B3(parkZone, drive, lift, wrist, intake);
-
-            // D2 D3 Right
+        // D2 D3 Right
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
 
                 trajSeq = AutonomousTrajectories.trajectory_D2_D3(parkZone, drive, lift, wrist, intake);
 
-            // B2 B3 Left
+        // B2 B3 Left
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
 
             trajSeq = AutonomousTrajectories.trajectory_B2_B3(parkZone, drive, lift, wrist, intake);
 
-            // C2 D2 Right
+        // C2 D2 Right
         } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
 
             trajSeq = AutonomousTrajectories.trajectory_C2_D2(parkZone, drive, lift, wrist, intake);
 
-            // C2 B2 Left
+        // C2 B2 Left
         }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
 
             trajSeq = AutonomousTrajectories.trajectory_C2_B2(parkZone, drive, lift, wrist, intake);
 
-            // D2 D2 Right
+        // D2 D2 Right
         }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
@@ -242,13 +241,15 @@ public class PainAutoState extends LinearOpMode {
             trajSeq = AutonomousTrajectories.trajectory_D2_D2(parkZone, drive, lift, wrist, intake);
 
 
-            // B2 B2 Left
+        // B2 B2 Left
         }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
 
             trajSeq = AutonomousTrajectories.trajectory_B2_B2(parkZone, drive, lift, wrist, intake);
         }
+
+        // Run the selected trajectory
         drive.followTrajectorySequence(trajSeq);
     }
 }

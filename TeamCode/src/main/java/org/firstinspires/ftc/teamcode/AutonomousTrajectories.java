@@ -16,29 +16,29 @@ public final class AutonomousTrajectories {
     final static double START_RIGHT_Y = 64;
 
     // coordinate autonomous constants
-    final static double D3_X = 29.5;
-    final static double D3_Y = 4.4;
-    final static double B3_X = 33.5;
-    final static double B3_Y = 4;
-    final static double LEFT_D2_X = 15;
-    final static double LEFT_D2_Y = 24; // check for accuracy
-    final static double RIGHT_D2_X = 30.5;
-    final static double RIGHT_D2_Y = 19.6; // check for accuracy
-    final static double RIGHT_B2_X = 33.1;
-    final static double RIGHT_B2_Y = 28.4; // check for accuracy
-    final static double LEFT_B2_X = 30;
-    final static double LEFT_B2_Y = 16.5; // check for accuracy
+    public static double D3_X = 29.5;
+    public static double D3_Y = 4.4;
+    public static double B3_X = 33.5;
+    public static double B3_Y = 4;
+    public static double LEFT_D2_X = 15;
+    public static double LEFT_D2_Y = 24; // check for accuracy
+    public static double RIGHT_D2_X = 30.5;
+    public static double RIGHT_D2_Y = 19.6; // check for accuracy
+    public static double RIGHT_B2_X = 33.1;
+    public static double RIGHT_B2_Y = 28.4; // check for accuracy
+    public static double LEFT_B2_X = 30;
+    public static double LEFT_B2_Y = 16.5; // check for accuracy
 
-    final static double RIGHT_C2_X = 9.0;
-    final static double RIGHT_C2_Y = 24.0;
-    final static double LEFT_C2_X = 7.75;
-    final static double LEFT_C2_Y = 18;
+    public static double RIGHT_C2_X = 9.0;
+    public static double RIGHT_C2_Y = 24.0;
+    public static double LEFT_C2_X = 7.75;
+    public static double LEFT_C2_Y = 18;
 
     // Cone stack coordinates
-    final static double RIGHT_STACK_X = 62.5;
-    final static double RIGHT_STACK_Y = 11;
-    final static double LEFT_STACK_X = 65.5;
-    final static double LEFT_STACK_Y = 11.25;
+    public static double RIGHT_STACK_X = 62.5;
+    public static double RIGHT_STACK_Y = 11;
+    public static double LEFT_STACK_X = 65.5;
+    public static double LEFT_STACK_Y = 11.25;
 
     // gripper constants
     final static double CLOSED = .7;

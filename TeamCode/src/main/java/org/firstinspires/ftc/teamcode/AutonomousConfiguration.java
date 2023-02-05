@@ -38,12 +38,9 @@ public class AutonomousConfiguration {
     private boolean readyToStart;
     private boolean savedToFile;
     private Telemetry telemetry;
-    private Telemetry.Item teleAlliance;
     private Telemetry.Item teleStartPosition;
     private Telemetry.Item teleDropLocation;
     private Telemetry.Item teleFirstDrop;
-    private Telemetry.Item telePlaceConeInTerminal;
-    private Telemetry.Item telePlaceConesOnJunctions;
     private Telemetry.Item teleDelayStartSeconds;
     private Telemetry.Item teleReadyToStart;
     private Telemetry.Item teleSavedToFile;
@@ -70,10 +67,6 @@ public class AutonomousConfiguration {
         ShowHelp();
     }
 
-    public AutonomousOptions.AllianceColor getAlliance() {
-        return autonomousOptions.getAllianceColor();
-    }
-
     public AutonomousOptions.StartPosition getStartPosition() {
         return autonomousOptions.getStartPosition();
     }
@@ -86,14 +79,6 @@ public class AutonomousConfiguration {
         return autonomousOptions.getFirstDrop();
     }
 
-    public AutonomousOptions.PlaceConesOnJunctions getPlaceConesOnJunctions() {
-        return autonomousOptions.getPlaceConesOnJunctions();
-    }
-
-    public AutonomousOptions.PlaceConeInTerminal getPlaceConeInTerminal() {
-        return autonomousOptions.getPlaceConeInTerminal();
-    }
-
     public int getDelayStartSeconds() {
         return autonomousOptions.getDelayStartSeconds();
     }
@@ -103,12 +88,9 @@ public class AutonomousConfiguration {
     }
 
     private void ShowHelp() {
-        teleAlliance = telemetry.addData("X = Blue, B = Red", autonomousOptions.getAllianceColor());
         teleStartPosition = telemetry.addData("D-pad left/right, select start position", autonomousOptions.getStartPosition());
-        teleDropLocation = telemetry.addData("D-pad up to cycle drop location", autonomousOptions.getDropLocation());
         teleFirstDrop = telemetry.addData("D-pad down to cycle initial drop", autonomousOptions.getFirstDrop());
-        telePlaceConesOnJunctions = telemetry.addData("Y to cycle cones on junctions", autonomousOptions.getPlaceConesOnJunctions());
-        telePlaceConeInTerminal = telemetry.addData("A to cycle place cone in terminal", autonomousOptions.getPlaceConeInTerminal());
+        teleDropLocation = telemetry.addData("D-pad up to cycle drop location", autonomousOptions.getDropLocation());
         teleDelayStartSeconds = telemetry.addData("Left & Right buttons, Delay Start", autonomousOptions.getDelayStartSeconds());
         teleReadyToStart = telemetry.addData("Ready to start: ", getReadyToStart());
         teleSavedToFile = telemetry.addData("Saved to file:", savedToFile);
@@ -128,18 +110,6 @@ public class AutonomousConfiguration {
             resetOptions();
         }
 
-        //Alliance Color
-        if (gamepadEx.wasJustReleased(GamepadKeys.Button.X)) {
-            autonomousOptions.setAllianceColor(AutonomousOptions.AllianceColor.Blue);
-            telemetry.speak("blue");
-        }
-
-        if (gamepadEx.wasJustReleased(GamepadKeys.Button.B)) {
-            autonomousOptions.setAllianceColor(AutonomousOptions.AllianceColor.Red);
-            telemetry.speak("red");
-        }
-        teleAlliance.setValue(autonomousOptions.getAllianceColor());
-
         //Start Position
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.DPAD_RIGHT)) {
             autonomousOptions.setStartPosition(AutonomousOptions.StartPosition.Right);
@@ -156,6 +126,12 @@ public class AutonomousConfiguration {
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
             AutonomousOptions.DropLocation dropLocation = autonomousOptions.getDropLocation().getNext();
             switch (dropLocation) {
+                case B2:
+                    telemetry.speak("Drop on B2");
+                    break;
+                case B3:
+                    telemetry.speak("Drop on B3");
+                    break;
                 case D2:
                     telemetry.speak("Drop on D2");
                     break;
@@ -171,6 +147,9 @@ public class AutonomousConfiguration {
         if (gamepadEx.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
             AutonomousOptions.FirstDrop firstDrop = autonomousOptions.getFirstDrop().getNext();
             switch (firstDrop) {
+                case B2:
+                    telemetry.speak("First drop on B2");
+                    break;
                 case C2:
                     telemetry.speak("First drop on C2");
                     break;
@@ -180,35 +159,6 @@ public class AutonomousConfiguration {
             }
             autonomousOptions.setFirstDrop(firstDrop);
             teleFirstDrop.setValue(firstDrop);
-        }
-
-        //Place cones on junction.
-        if (gamepadEx.wasJustReleased(GamepadKeys.Button.Y)) {
-            AutonomousOptions.PlaceConesOnJunctions placeOnJunction = autonomousOptions.getPlaceConesOnJunctions().getNext();
-            switch (placeOnJunction) {
-                case Yes:
-                    telemetry.speak("place cones on junctions, yes");
-                    break;
-                case No:
-                    telemetry.speak("place cones on junctions, no");
-                    break;
-            }
-            autonomousOptions.setPlaceConesOnJunctions(placeOnJunction);
-            telePlaceConesOnJunctions.setValue(placeOnJunction);
-        }
-
-        //Place cone in terminal
-        if (gamepadEx.wasJustReleased(GamepadKeys.Button.A)) {
-            AutonomousOptions.PlaceConeInTerminal placeInTerminal = autonomousOptions.getPlaceConeInTerminal().getNext();
-            switch (placeInTerminal) {
-                case Yes:
-                    telemetry.speak("place cone in terminal, yes");
-                    break;
-                case No:
-                    telemetry.speak("place cone in terminal, no");
-            }
-            autonomousOptions.setPlaceConeInTerminal(placeInTerminal);
-            telePlaceConeInTerminal.setValue(placeInTerminal);
         }
 
         // Keep range within 0-15 seconds. Wrap at either end.
@@ -225,7 +175,7 @@ public class AutonomousConfiguration {
         teleDelayStartSeconds.setValue(autonomousOptions.getDelayStartSeconds());
 
         //Have the required options been set?
-        readyToStart = !(autonomousOptions.getAllianceColor() == AutonomousOptions.AllianceColor.None || autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.None);
+        readyToStart = !(autonomousOptions.getStartPosition() == AutonomousOptions.StartPosition.None);
         teleReadyToStart.setValue(readyToStart);
 
         //Save the options to a file if ready to start and start button is pressed.
@@ -241,11 +191,8 @@ public class AutonomousConfiguration {
 
     // Default selections if driver does not select anything.
     private void resetOptions() {
-        autonomousOptions.setAllianceColor(AutonomousOptions.AllianceColor.None);
         autonomousOptions.setStartPosition(AutonomousOptions.StartPosition.None);
         autonomousOptions.setDropLocation(AutonomousOptions.DropLocation.D3);
-        autonomousOptions.setPlaceConeInTerminal(AutonomousOptions.PlaceConeInTerminal.No);
-        autonomousOptions.setPlaceConesOnJunctions(AutonomousOptions.PlaceConesOnJunctions.No);
         autonomousOptions.setFirstDrop(AutonomousOptions.FirstDrop.C2);
         autonomousOptions.setDelayStartSeconds(0);
         readyToStart = false;

@@ -215,7 +215,6 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
         while (runtime.seconds() < delay) {
         }
 
-        if(autonomousConfiguration.getAlliance() == AutonomousOptions.AllianceColor.Blue) {
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Blue Right
                 x = -32;
                 y = 64;
@@ -292,6 +291,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
                         .strafeLeft(parkZone) // flip it!
                         .build();
             }
+            /*
         } else {  // Red Alliance
             if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right) {  // Red Right
                 x = 32;
@@ -371,7 +371,7 @@ public class SlicedBreadAutoSplines extends LinearOpMode {
 
             }
         }
-
+*/
         drive.followTrajectorySequence(trajSeq);
     }
 }
