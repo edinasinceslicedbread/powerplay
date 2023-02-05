@@ -150,9 +150,11 @@ public class MeepMeepTesting {
                     .splineToSplineHeading(new Pose2d(-24, -60, Math.toRadians(90)), Math.toRadians(0))
                     // raise lift to HIGH
                     // drive to C2
-                    .splineToSplineHeading(new Pose2d(-LEFT_C2_X, -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
-                    .waitSeconds(1)
+                    .splineToSplineHeading(new Pose2d(-(LEFT_C2_X+1), -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
+                        .forward(2)
 
+                    .waitSeconds(0.5)
+                        .back(2)
                     // back away from C2
                     .setReversed(true)
                     .setTangent(90)
@@ -173,7 +175,7 @@ public class MeepMeepTesting {
                     .setReversed(true)
                     .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
                     .setReversed(false)
-                    .waitSeconds(1)
+                    .waitSeconds(0.5)
                     // reposition wrist
                     // drive to D3
                     .splineTo(new Vector2d(-B3_X, -B3_Y), Math.toRadians(45.00))
@@ -183,7 +185,7 @@ public class MeepMeepTesting {
                     .setReversed(true)
                     .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
                     .setReversed(false)
-                    .waitSeconds(1)
+                    .waitSeconds(0.5)
                     // reposition wrist
                     // drive to D3
                     .splineTo(new Vector2d(-B3_X, -B3_Y), Math.toRadians(45.00))
@@ -192,7 +194,7 @@ public class MeepMeepTesting {
                     .setReversed(true)
                     .splineTo(new Vector2d(-LEFT_STACK_X, -LEFT_STACK_Y), Math.toRadians(180))
                     .setReversed(false)
-                    .waitSeconds(1)
+                    .waitSeconds(0.5)
                     // reposition wrist
                     // drive to D3
                     .splineTo(new Vector2d(-B3_X, -B3_Y), Math.toRadians(45.00))

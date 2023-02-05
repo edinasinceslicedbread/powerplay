@@ -187,11 +187,6 @@ public class PainAutoState extends LinearOpMode {
         // wait for start button to be pressed
         waitForStart();
 
-        // do a starting delay if requested
-        //double delay = runtime.seconds()+autonomousConfiguration.getDelayStartSeconds();
-        //while (runtime.seconds() < delay) {
-        //}
-
         // C2 D3
         if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
                 && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
@@ -239,7 +234,6 @@ public class PainAutoState extends LinearOpMode {
                 && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
 
             trajSeq = AutonomousTrajectories.trajectory_D2_D2(parkZone, drive, lift, wrist, intake);
-
 
         // B2 B2 Left
         }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
