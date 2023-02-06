@@ -44,8 +44,8 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot;
 
-        //myBot = trajectory_C2_D3(meepMeep);
-        myBot = trajectory_C2_B3(meepMeep);
+        myBot = trajectory_C2_D3(meepMeep);
+        //myBot = trajectory_C2_B3(meepMeep);
         //myBot = trajectory_D2_D3(meepMeep);
         //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
@@ -74,10 +74,13 @@ public class MeepMeepTesting {
                         // reposition wrist to front
                         // drive around D1
                         .setTangent(-180)
-                        .splineToSplineHeading(new Pose2d(17, -57, Math.toRadians(90)), Math.toRadians(135))
+                        .splineToSplineHeading(new Pose2d(20, -57, Math.toRadians(90)), Math.toRadians(135))
                         // raise lift to HIGH
                         // drive to C2
-                        .splineToSplineHeading(new Pose2d(RIGHT_C2_X, -RIGHT_C2_Y, Math.toRadians(180)), Math.toRadians(90))
+
+                            .splineToSplineHeading(new Pose2d(RIGHT_C2_X+4, -(RIGHT_C2_Y+12), Math.toRadians(180)), Math.toRadians(90))
+
+                            .splineToSplineHeading(new Pose2d(RIGHT_C2_X, -RIGHT_C2_Y, Math.toRadians(180)), Math.toRadians(180))
                         .waitSeconds(1)
                         // back away from C2
 
@@ -124,6 +127,7 @@ public class MeepMeepTesting {
                         .splineTo(new Vector2d(D3_X, -D3_Y), Math.toRadians(135.00))
                         // open intake and back up
                         .waitSeconds(0.5)
+                            .back(2)
                         .setReversed(true)
                         .splineToLinearHeading(new Pose2d(12, -12, Math.toRadians(90)), Math.toRadians(0))
                         .setReversed(false)
@@ -151,10 +155,8 @@ public class MeepMeepTesting {
                     // raise lift to HIGH
                     // drive to C2
                     .splineToSplineHeading(new Pose2d(-(LEFT_C2_X+1), -LEFT_C2_Y, Math.toRadians(0)), Math.toRadians(90))
-                        .forward(2)
 
                     .waitSeconds(0.5)
-                        .back(2)
                     // back away from C2
                     .setReversed(true)
                     .setTangent(90)
@@ -201,7 +203,7 @@ public class MeepMeepTesting {
                     // open intake and back up
                     .waitSeconds(0.5)
                     .setReversed(true)
-                    .splineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(90)), Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(90)), Math.toRadians(45))
                     .setReversed(false)
                     //.strafeLeft(-23.99)
                     .build()

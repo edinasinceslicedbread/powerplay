@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -17,11 +16,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="PainAutoState", group="Autonomous")
-public class PainAutoState extends LinearOpMode {
-
-    // Menu initialization
-    AutonomousConfiguration autonomousConfiguration = new AutonomousConfiguration();
+@Autonomous(name="Auto C2-D3", group="Autonomous")
+public class Auto_C2D3 extends LinearOpMode {
 
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
@@ -45,7 +41,6 @@ public class PainAutoState extends LinearOpMode {
     double tagsize = 0.0444;
 
     int numFramesWithoutDetection = 0;
-    boolean tagFound = false;
 
     // april tag constants
     final float DECIMATION_HIGH = 3;
@@ -56,16 +51,16 @@ public class PainAutoState extends LinearOpMode {
     // parking constants
     final double ZONE_ONE = 28;
     final double ZONE_TWO = 0;
-    final double ZONE_THREE = -24;
+    final double ZONE_THREE = -28;
 
-    TrajectorySequence trajSeq;
+    TrajectorySequence trajSeq, trajSeq_Park;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         // Game initialization
         double parkZone = ZONE_TWO; // Set this variable when we read the AprilTag
-        boolean menuFlag = false;
+        boolean detected = false;
 
         // init Intake
         IntakeTool intake = new IntakeTool();
@@ -84,6 +79,8 @@ public class PainAutoState extends LinearOpMode {
 
         // init Drive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        trajSeq = AutonomousTrajectories.trajectory_C2_D3(drive, lift, wrist, intake);
 
         // set up camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -115,13 +112,8 @@ public class PainAutoState extends LinearOpMode {
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(1);
 
-        // init menu
-        autonomousConfiguration.init(this.gamepad1, this.telemetry, hardwareMap.appContext);
-
         // start reading tags
-        // run set up menu
-        while (!menuFlag && !isStarted()) {
-            menuFlag = autonomousConfiguration.init_loop();
+        while (!detected) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -151,21 +143,28 @@ public class PainAutoState extends LinearOpMode {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
 
-                    tagFound=true;
-
                     // loop through detected tags - there should be only one (:
                     for (AprilTagDetection detection : detections) {
 
                         //determine which zone to park in
                         if (detection.id==1) {
                             parkZone = ZONE_ONE;
+                            detected = true;
                         } else if (detection.id==2) {
                             parkZone = ZONE_TWO;
+                            detected = true;
                         } else if (detection.id==3) {
                             parkZone = ZONE_THREE;
+                            detected = true;
+                        } else {
+                            detected = false;
                         }
 
-                        //telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+                        if (detected) {
+                            telemetry.addLine("Autonomous Routine: C2-D3");
+                            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+                            telemetry.addLine("READY FOR START");
+                        }
                     }
                 }
 
@@ -173,77 +172,16 @@ public class PainAutoState extends LinearOpMode {
             }
         }
 
-        // check to make sure starting config is valid
-        if (!autonomousConfiguration.getReadyToStart()) {
-            telemetry.addData("Alert", "Not ready to start!");
-            telemetry.speak("Not ready to start!");
-            runtime.reset();
-            while (runtime.seconds() < 2) {
-            }
-            requestOpModeStop();
-        }
-        runtime.reset();
-
         // wait for start button to be pressed
         waitForStart();
+        runtime.reset();
 
-        // C2 D3
-        if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
-
-                trajSeq = AutonomousTrajectories_old.trajectory_C2_D3(parkZone, drive, lift, wrist, intake);
-
-        // C2 B3
-        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
-
-                trajSeq = AutonomousTrajectories_old.trajectory_C2_B3(parkZone, drive, lift, wrist, intake);
-        // D2 D3 Right
-        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D3) {
-
-                trajSeq = AutonomousTrajectories_old.trajectory_D2_D3(parkZone, drive, lift, wrist, intake);
-
-        // B2 B3 Left
-        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B3) {
-
-            trajSeq = AutonomousTrajectories_old.trajectory_B2_B3(parkZone, drive, lift, wrist, intake);
-
-        // C2 D2 Right
-        } else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
-
-            trajSeq = AutonomousTrajectories_old.trajectory_C2_D2(parkZone, drive, lift, wrist, intake);
-
-        // C2 B2 Left
-        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.C2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
-
-            trajSeq = AutonomousTrajectories_old.trajectory_C2_B2(parkZone, drive, lift, wrist, intake);
-
-        // D2 D2 Right
-        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Right
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.D2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.D2) {
-
-            trajSeq = AutonomousTrajectories_old.trajectory_D2_D2(parkZone, drive, lift, wrist, intake);
-
-        // B2 B2 Left
-        }else if(autonomousConfiguration.getStartPosition() == AutonomousOptions.StartPosition.Left
-                && autonomousConfiguration.getFirstDrop() == AutonomousOptions.FirstDrop.B2
-                && autonomousConfiguration.getDropLocation() == AutonomousOptions.DropLocation.B2) {
-
-            trajSeq = AutonomousTrajectories_old.trajectory_B2_B2(parkZone, drive, lift, wrist, intake);
-        }
+        // Build parking trajectory
+        trajSeq_Park = AutonomousTrajectories.trajectory_ParkRight(parkZone, true, drive, lift, wrist, intake);
 
         // Run the selected trajectory
         drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequence(trajSeq_Park);
+
     }
 }
