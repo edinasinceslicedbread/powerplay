@@ -57,10 +57,13 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 public class SampleMecanumDrive extends MecanumDrive {
 
     // Pain
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 0);
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(.3, 0, 0);
+    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 0);
+    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(.3, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.19;
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
+
+    public static double LATERAL_MULTIPLIER = 1.2282;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;

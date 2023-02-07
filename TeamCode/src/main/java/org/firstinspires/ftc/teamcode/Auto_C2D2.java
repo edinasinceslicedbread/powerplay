@@ -113,7 +113,7 @@ public class Auto_C2D2 extends LinearOpMode {
         lift.setPower(1);
 
         // start reading tags
-        while (!detected) {
+        while (!detected && opModeIsActive()) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -169,6 +169,7 @@ public class Auto_C2D2 extends LinearOpMode {
                 }
 
                 telemetry.update();
+                idle();
             }
         }
 
@@ -178,6 +179,9 @@ public class Auto_C2D2 extends LinearOpMode {
 
         // Build parking trajectory
         trajSeq_Park = AutonomousTrajectories.trajectory_ParkRight(parkZone, true, drive, lift, wrist, intake);
+
+        telemetry.addLine("Ready to Drive");
+        telemetry.update();
 
         // Run the selected trajectory
         drive.followTrajectorySequence(trajSeq);

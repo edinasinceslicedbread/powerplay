@@ -49,7 +49,7 @@ public class Auto_C2B3 extends LinearOpMode {
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
     // parking constants
-    final double ZONE_ONE = 28;
+    final double ZONE_ONE = 24;
     final double ZONE_TWO = 0;
     final double ZONE_THREE = -24;
 
@@ -169,6 +169,7 @@ public class Auto_C2B3 extends LinearOpMode {
                 }
 
                 telemetry.update();
+                idle();
             }
         }
 
