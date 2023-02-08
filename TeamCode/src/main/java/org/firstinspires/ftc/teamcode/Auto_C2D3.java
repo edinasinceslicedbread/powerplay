@@ -53,7 +53,7 @@ public class Auto_C2D3 extends LinearOpMode {
     final double ZONE_TWO = 0;
     final double ZONE_THREE = -24;
 
-    TrajectorySequence trajSeq, trajSeq_Park;
+    TrajectorySequence trajSeq, trajSeq_Park, trajSeq_Park1, trajSeq_Park2, trajSeq_Park3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -113,7 +113,7 @@ public class Auto_C2D3 extends LinearOpMode {
         lift.setPower(1);
 
         // start reading tags
-        while (!detected) {
+        while (!isStarted() && !isStopRequested()) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
@@ -168,21 +168,22 @@ public class Auto_C2D3 extends LinearOpMode {
                     }
                 }
 
+                sleep(20);
                 telemetry.update();
-                idle();
             }
         }
 
-        // wait for start button to be pressed
-        waitForStart();
+        camera.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
+            @Override
+            public void onClose() {
+            }
+        });
         runtime.reset();
-
-        // Build parking trajectory
-        trajSeq_Park = AutonomousTrajectories.trajectory_ParkRight(parkZone, true, drive, lift, wrist, intake);
 
         // Run the selected trajectory
         drive.followTrajectorySequence(trajSeq);
-        drive.followTrajectorySequence(trajSeq_Park);
+        // Run the park trajectory
+        drive.followTrajectorySequence(AutonomousTrajectories.trajectory_ParkRight(parkZone, true, drive, lift, wrist, intake));
 
     }
 }
