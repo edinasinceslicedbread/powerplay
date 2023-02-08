@@ -15,41 +15,45 @@ public class MeepMeepTesting {
     final static double START_RIGHT_Y = 64;
 
     // coordinate autonomous constants
-    final static double D3_X = 29.5;
-    final static double D3_Y = 4.4;
-    final static double B3_X = 33.5;
-    final static double B3_Y = 4;
+    final static double B3_X = 34;
+    final static double B3_Y = 6;
+
+    final static double D3_X = 32;
+    final static double D3_Y = 5.5;
+
     final static double LEFT_D2_X = 15;
     final static double LEFT_D2_Y = 24; // check for accuracy
-    final static double RIGHT_D2_X = 30.5;
-    final static double RIGHT_D2_Y = 19.6; // check for accuracy
-    final static double RIGHT_B2_X = 33.1;
-    final static double RIGHT_B2_Y = 28.4; // check for accuracy
-    final static double LEFT_B2_X = 30;
-    final static double LEFT_B2_Y = 16.5; // check for accuracy
 
-    final static double RIGHT_C2_X = 9.0;
-    final static double RIGHT_C2_Y = 24.0;
-    final static double LEFT_C2_X = 7.75;
-    final static double LEFT_C2_Y = 18;
+    final static double RIGHT_D2_X = 32;
+    final static double RIGHT_D2_Y = 18.5; // check for accuracy
+
+    final static double RIGHT_B2_X = 15.5;
+    final static double RIGHT_B2_Y = 23; // check for accuracy
+    final static double LEFT_B2_X = 35;
+    final static double LEFT_B2_Y = 19.5; // check for accuracy
+
+    final static double RIGHT_C2_X = 8.5;
+    final static double RIGHT_C2_Y = 23;
+    final static double LEFT_C2_X = 9;
+    final static double LEFT_C2_Y = 26;
 
     // Cone stack coordinates
-    final static double RIGHT_STACK_X = 62.5;
-    final static double RIGHT_STACK_Y = 11;
-    final static double LEFT_STACK_X = 65.5;
-    final static double LEFT_STACK_Y = 11.25;
+    final static double RIGHT_STACK_X = 64;
+    final static double RIGHT_STACK_Y = 12;
+    final static double LEFT_STACK_X = 64;
+    final static double LEFT_STACK_Y = 12.5;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot;
 
-        myBot = trajectory_C2_D3(meepMeep);
+        //myBot = trajectory_C2_D3(meepMeep);
         //myBot = trajectory_C2_B3(meepMeep);
         //myBot = trajectory_D2_D3(meepMeep);
         //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
-        //myBot = trajectory_C2_B2(meepMeep);
+        myBot = trajectory_C2_B2(meepMeep);
         //myBot = trajectory_D2_D2(meepMeep);
         //myBot = trajectory_B2_B2(meepMeep);
 
@@ -604,8 +608,8 @@ public class MeepMeepTesting {
                                 .waitSeconds(1)
                                 // back away from D2
 
-                                .setTangent(Math.toRadians(70))
-                                .splineToSplineHeading(new Pose2d(-20, -12, Math.toRadians(180)), Math.toRadians(180))
+                                .setTangent(Math.toRadians(50))
+                                .splineToSplineHeading(new Pose2d(-16, -12, Math.toRadians(180)), Math.toRadians(180))
                                 // Drive to LEFT STACK
                                 .splineToSplineHeading(new Pose2d(-LEFT_STACK_X, -LEFT_STACK_Y, Math.toRadians(180)), Math.toRadians(180))
                                 .waitSeconds(1)
