@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.arcrobotics.ftclib.util.MathUtils;
@@ -13,11 +14,13 @@ public class DualLiftTool {
     public void init(HardwareMap hwMap) {
         liftFront = new MotorEx(hwMap, "lift");
         liftFront.setInverted(true);
+        liftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
 
         liftRear = new MotorEx(hwMap, "liftRear");
         liftRear.setInverted(false);
 
-        lift = new MotorGroup(liftFront, liftRear);
+        //lift = new MotorGroup(liftFront, liftRear);
+        lift = new MotorGroup(liftRear);
 
         lift.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         lift.setRunMode(MotorEx.RunMode.PositionControl);

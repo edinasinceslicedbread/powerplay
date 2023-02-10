@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 // hi dad! (:  - E
+@Disabled
 @Autonomous(name="Lift Encoder Test", group="Mark")
 public class LiftEncoderTest extends LinearOpMode {
 

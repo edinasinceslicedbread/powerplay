@@ -89,7 +89,7 @@ public class PainTeleOp2P extends OpMode
 
     // intake constants
     final double CLOSED = .6;
-    final double OPEN = 0;
+    final double OPEN = 0.1;
 
     // wrist constants
     double wristEndTime;
@@ -287,6 +287,11 @@ public class PainTeleOp2P extends OpMode
         turbo = TURBO_BASE + (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)/3) - (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)/5);
         speed_limit = 1-(((double)liftTarget/(double)HIGH) * LIMIT_RAMP);
         drive.setRange(-speed_limit, speed_limit);
+
+        // reset Yaw
+        if (driverOp.wasJustReleased(GamepadKeys.Button.START)) {
+            imu.resetYaw();
+        }
 
         if (!FIELD_CENTRIC) {
             drive.driveRobotCentric(

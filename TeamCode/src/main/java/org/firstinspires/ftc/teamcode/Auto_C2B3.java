@@ -49,9 +49,9 @@ public class Auto_C2B3 extends LinearOpMode {
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
     // parking constants
-    final double ZONE_ONE = 24;
+    final double ZONE_ONE = 25;
     final double ZONE_TWO = 0;
-    final double ZONE_THREE = -24;
+    final double ZONE_THREE = -25;
 
     TrajectorySequence trajSeq, trajSeq_Park, trajSeq_Park1, trajSeq_Park2, trajSeq_Park3;
 
@@ -71,16 +71,19 @@ public class Auto_C2B3 extends LinearOpMode {
 
         // init lift
         DcMotor lift = hardwareMap.dcMotor.get("lift");
+        DcMotor liftRear = hardwareMap.dcMotor.get("liftRear");
 
         // set up lift
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // init Drive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        trajSeq = AutonomousTrajectories.trajectory_C2_B3(drive, lift, wrist, intake);
+        trajSeq = AutonomousTrajectories.trajectory_C2_B3(drive, lift, liftRear, wrist, intake);
 
         // set up camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -108,9 +111,7 @@ public class Auto_C2B3 extends LinearOpMode {
         sleep(1000);
 
         // set start game lift position
-        lift.setTargetPosition(AutonomousTrajectories.STACK);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(1);
+        AutonomousTrajectories.run_Lift(AutonomousTrajectories.STACK, lift, liftRear);
 
         // start reading tags
         while (!isStarted() && !isStopRequested()) {
@@ -183,7 +184,7 @@ public class Auto_C2B3 extends LinearOpMode {
         // Run the selected trajectory
         drive.followTrajectorySequence(trajSeq);
         // Run the park trajectory
-        drive.followTrajectorySequence(AutonomousTrajectories.trajectory_ParkLeft(parkZone, true, drive, lift, wrist, intake));
+        drive.followTrajectorySequence(AutonomousTrajectories.trajectory_ParkLeft(parkZone, true, drive, lift, liftRear, wrist, intake));
 
     }
 }

@@ -50,10 +50,10 @@ public class MeepMeepTesting {
 
         //myBot = trajectory_C2_D3(meepMeep);
         //myBot = trajectory_C2_B3(meepMeep);
-        //myBot = trajectory_D2_D3(meepMeep);
+        myBot = trajectory_D2_D3(meepMeep);
         //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
-        myBot = trajectory_C2_B2(meepMeep);
+        //myBot = trajectory_C2_B2(meepMeep);
         //myBot = trajectory_D2_D2(meepMeep);
         //myBot = trajectory_B2_B2(meepMeep);
 
@@ -229,23 +229,27 @@ public class MeepMeepTesting {
                                 // reposition wrist to front
                                 // drive around D1
                                 .setTangent(-180)
-                                .splineToSplineHeading(new Pose2d(15, -57, Math.toRadians(90)), Math.toRadians(135))
+                                .splineToSplineHeading(new Pose2d(14, -54, Math.toRadians(90)), Math.toRadians(135))
                                 // raise lift to HIGH
                                 // drive to D2
-                                .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
-                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
+                                .splineToSplineHeading(new Pose2d((LEFT_D2_X-4), -(LEFT_D2_Y+10), Math.toRadians(0)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(0)), Math.toRadians(45))
+
+                                //.splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(180)), Math.toRadians(90))
+                                //.splineToSplineHeading(new Pose2d(LEFT_D2_X, -LEFT_D2_Y, Math.toRadians(180)), Math.toRadians(45))
 
                                 .waitSeconds(1)
                                 // back away from D2
 
-                                .setReversed(true)
                                 .setTangent(Math.toRadians(110))
-                                .splineToSplineHeading(new Pose2d(18, -10, Math.toRadians(180)), Math.toRadians(0))
+                                .setReversed(true)
+                                .splineToSplineHeading(new Pose2d(12, -10, Math.toRadians(0)), Math.toRadians(0))
+                                .setReversed(false)
                                 // lower lift to stack height
                                 // move to stack for new cone
 
                                 .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -RIGHT_STACK_Y, Math.toRadians(180)), Math.toRadians(0))
-                                .setReversed(false)
+
                                 .waitSeconds(1)
                                 // reposition wrist
                                 // drive to D3
