@@ -1122,7 +1122,7 @@ public final class AutonomousTrajectories {
                     .back(2)
                     // drive to correct zone
                     .setReversed(true)
-                    .splineToLinearHeading(new Pose2d((36 - parkZone), -12, Math.toRadians(90)), Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d((36 - parkZone), -13, Math.toRadians(90)), Math.toRadians(0))
                     .setReversed(false)
 
                     // lift to stack DRIVE
@@ -1134,7 +1134,7 @@ public final class AutonomousTrajectories {
 
                     .forward(2)
                     // drive to correct zone
-                    .splineToLinearHeading(new Pose2d((36 - parkZone), -12, Math.toRadians(90)), Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d((36 - parkZone), -13, Math.toRadians(90)), Math.toRadians(0))
 
                     // lift to stack DRIVE
                     .addTemporalMarker(() -> run_Lift(DRIVE, lift, liftRear))
