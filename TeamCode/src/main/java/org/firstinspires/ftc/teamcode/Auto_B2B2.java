@@ -50,8 +50,8 @@ public class Auto_B2B2 extends LinearOpMode {
 
     // parking constants
     final double ZONE_ONE = 25;
-    final double ZONE_TWO = 0;
-    final double ZONE_THREE = -25;
+    final double ZONE_TWO = 2;
+    final double ZONE_THREE = -24;
 
     TrajectorySequence trajSeq;
 
@@ -111,7 +111,7 @@ public class Auto_B2B2 extends LinearOpMode {
         sleep(1000);
 
         // set start game lift position
-        AutonomousTrajectories.run_Lift(AutonomousTrajectories.STACK, lift, liftRear);
+        AutonomousTrajectories.run_Lift(AutonomousTrajectories.INIT, lift, liftRear);
 
         // start reading tags
         while (!isStarted() && !isStopRequested()) {

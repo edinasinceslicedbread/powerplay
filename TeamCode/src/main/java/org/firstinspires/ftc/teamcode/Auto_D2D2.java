@@ -111,7 +111,7 @@ public class Auto_D2D2 extends LinearOpMode {
         sleep(1000);
 
         // set start game lift position
-        AutonomousTrajectories.run_Lift(AutonomousTrajectories.STACK, lift, liftRear);
+        AutonomousTrajectories.run_Lift(AutonomousTrajectories.INIT, lift, liftRear);
 
         // start reading tags
         while (!isStarted() && !isStopRequested()) {

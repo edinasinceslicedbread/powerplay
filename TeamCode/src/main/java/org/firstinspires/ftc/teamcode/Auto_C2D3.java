@@ -50,7 +50,7 @@ public class Auto_C2D3 extends LinearOpMode {
 
     // parking constants
     final double ZONE_ONE = 25;
-    final double ZONE_TWO = 0;
+    final double ZONE_TWO = 1;
     final double ZONE_THREE = -25;
 
     TrajectorySequence trajSeq, trajSeq_Park, trajSeq_Park1, trajSeq_Park2, trajSeq_Park3;
@@ -112,7 +112,7 @@ public class Auto_C2D3 extends LinearOpMode {
         sleep(1000);
 
         // set start game lift position
-        AutonomousTrajectories.run_Lift(AutonomousTrajectories.STACK, lift, liftRear);
+        AutonomousTrajectories.run_Lift(AutonomousTrajectories.INIT, lift, liftRear);
 
         // start reading tags
         while (!isStarted() && !isStopRequested()) {

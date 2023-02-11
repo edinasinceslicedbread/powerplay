@@ -50,12 +50,12 @@ public class MeepMeepTesting {
 
         //myBot = trajectory_C2_D3(meepMeep);
         //myBot = trajectory_C2_B3(meepMeep);
-        myBot = trajectory_D2_D3(meepMeep);
+        //myBot = trajectory_D2_D3(meepMeep);
         //myBot = trajectory_B2_B3(meepMeep);
         //myBot = trajectory_C2_D2(meepMeep);
         //myBot = trajectory_C2_B2(meepMeep);
         //myBot = trajectory_D2_D2(meepMeep);
-        //myBot = trajectory_B2_B2(meepMeep);
+        myBot = trajectory_B2_B2(meepMeep);
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)

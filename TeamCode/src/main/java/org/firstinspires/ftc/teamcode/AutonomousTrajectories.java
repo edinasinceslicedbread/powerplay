@@ -19,32 +19,32 @@ public final class AutonomousTrajectories {
     final static double START_RIGHT_Y = 64;
 
     // coordinate autonomous constants
-    final static double B3_X = 33;
+    final static double B3_X = 35.5;
     final static double B3_Y = 7.5;
 
     final static double D3_X = 32;
     final static double D3_Y = 5.5;
 
     final static double LEFT_D2_X = 18;
-    final static double LEFT_D2_Y = 23; // check for accuracy
+    final static double LEFT_D2_Y = 24; // check for accuracy
 
     final static double RIGHT_D2_X = 32;
     final static double RIGHT_D2_Y = 18.5; // check for accuracy
 
     final static double RIGHT_B2_X = 18.5;
-    final static double RIGHT_B2_Y = 27.5; // check for accuracy
+    final static double RIGHT_B2_Y = 26.5; // check for accuracy
     final static double LEFT_B2_X = 33.5;
     final static double LEFT_B2_Y = 18; // check for accuracy
 
     final static double RIGHT_C2_X = 8.5;
-    final static double RIGHT_C2_Y = 23;
-    final static double LEFT_C2_X = 9;
+    final static double RIGHT_C2_Y = 22.5;
+    final static double LEFT_C2_X = 9.5;
     final static double LEFT_C2_Y = 25;
 
     // Cone stack coordinates
     final static double RIGHT_STACK_X = 63.5;
-    final static double RIGHT_STACK_Y = 11;
-    final static double LEFT_STACK_X = 65.5;
+    final static double RIGHT_STACK_Y = 13;
+    final static double LEFT_STACK_X = 66;
     final static double LEFT_STACK_Y = 14.5;
 
     // gripper constants
@@ -52,14 +52,15 @@ public final class AutonomousTrajectories {
     final static double OPEN = .1;
 
     // arm height constants
-    final static int HIGH = 2800;
-    final static int MEDIUM = 1975;
+    final static int HIGH = 2775;
+    final static int MEDIUM = 1950;
     final static int LOW = 1175;
     final static int STACK = 400;
     final static int DRIVE = 0;
+    final static int INIT = 50;
 
     final static int STACK_SAFE = 750;
-    final static int CONE_HEIGHT = 85;
+    final static int CONE_HEIGHT = 90;
 
     // wrist constants
     final static double FRONT = 0.25;
@@ -113,7 +114,7 @@ public final class AutonomousTrajectories {
                 // lower lift to stack height
                 // reposition wrist to BACK
 
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X + 0.5, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -125,7 +126,7 @@ public final class AutonomousTrajectories {
                 // lift to HIGH
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to D3
-                .splineTo(new Vector2d(D3_X, -(D3_Y)), Math.toRadians(135.00))
+                .splineTo(new Vector2d(D3_X - 1.0, -(D3_Y - 1.0)), Math.toRadians(135.00))
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                 .waitSeconds(0.2)
@@ -142,7 +143,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for new cone
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1, -(RIGHT_STACK_Y + 0.5), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1.5, -(RIGHT_STACK_Y + 1), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -171,7 +172,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for cone 3
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X + 1, -(RIGHT_STACK_Y + 0.5), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X + 2.5, -(RIGHT_STACK_Y + 1), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -360,7 +361,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+1
                 //
                 // move to stack for new cone
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-1), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-3), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -371,7 +372,7 @@ public final class AutonomousTrajectories {
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to B2
                 .setReversed(true)
-                .splineTo(new Vector2d(D3_X, -(D3_Y)), Math.toRadians(135.00))
+                .splineTo(new Vector2d(D3_X - 1, -(D3_Y)), Math.toRadians(135.00))
                 .setReversed(false)
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -387,7 +388,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+2
                 //
                 // return to stack for new cone
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1, -(RIGHT_STACK_Y-1), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1, -(RIGHT_STACK_Y-3), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.5)
                 // lift cone off of stack
@@ -415,7 +416,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+3
                 //
                 // return to stack for cone 3
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+2, -(RIGHT_STACK_Y-1), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+2, -(RIGHT_STACK_Y-3), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -426,7 +427,7 @@ public final class AutonomousTrajectories {
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to B2
                 .setReversed(true)
-                .splineTo(new Vector2d(D3_X, -(D3_Y)), Math.toRadians(135.00))
+                .splineTo(new Vector2d(D3_X + 1.5, -(D3_Y + 1.5)), Math.toRadians(135.00))
                 .setReversed(false)
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -483,7 +484,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+1
                 //
                 // move to stack for new cone
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X-0.5), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X - 1), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -494,7 +495,7 @@ public final class AutonomousTrajectories {
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to B2
                 .setReversed(true)
-                .splineTo(new Vector2d(-(B3_X), -(B3_Y+1)), Math.toRadians(45.00))
+                .splineTo(new Vector2d(-(B3_X - 2), -(B3_Y+1)), Math.toRadians(45.00))
                 .setReversed(false)
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -510,7 +511,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+2
                 //
                 // return to stack for new cone
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X - 1), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.5)
                 // lift cone off of stack
@@ -521,7 +522,7 @@ public final class AutonomousTrajectories {
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to B2
                 .setReversed(true)
-                .splineTo(new Vector2d(-(B3_X), -(B3_Y+1)), Math.toRadians(45.00))
+                .splineTo(new Vector2d(-(B3_X - 2), -(B3_Y + 1)), Math.toRadians(45.00))
 
                 .setReversed(false)
                 // open intake
@@ -539,7 +540,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+3
                 //
                 // return to stack for cone 3
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+0.5), -(LEFT_STACK_Y+0.5), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X - 0.5), -(LEFT_STACK_Y+0.5), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -550,7 +551,7 @@ public final class AutonomousTrajectories {
                 .addTemporalMarker(() -> run_Lift(HIGH, lift, liftRear))
                 // drive to B2
                 .setReversed(true)
-                .splineTo(new Vector2d(-(B3_X), -(B3_Y+1)), Math.toRadians(45.00))
+                .splineTo(new Vector2d(-(B3_X - 2.5), -(B3_Y+1)), Math.toRadians(45.00))
                 .setReversed(false)
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
@@ -562,7 +563,7 @@ public final class AutonomousTrajectories {
 
                 .build();
 
-        finalPose = new Pose2d(-(B3_X), -(B3_Y), Math.toRadians(225.00));
+        finalPose = new Pose2d(-(B3_X), -(B3_Y+1), Math.toRadians(225.00));
 
         return trajSeq;
     }
@@ -609,7 +610,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+1
                 //
                 // move to stack for new cone
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-1), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-3), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -636,7 +637,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+2
                 //
                 // return to stack for new cone
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-1), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-3), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.5)
                 // lift cone off of stack
@@ -664,7 +665,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+3
                 //
                 // return to stack for cone 3
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-1.5), Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y-3.5), Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -734,7 +735,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+1
                 //
                 // move to stack for new cone
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X-0.5), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X-1), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -761,7 +762,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+2
                 //
                 // return to stack for new cone
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+0.5), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X), -(LEFT_STACK_Y+1), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.5)
                 // lift cone off of stack
@@ -790,7 +791,7 @@ public final class AutonomousTrajectories {
                 // Cone 1+3
                 //
                 // return to stack for cone 3
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1.5), -(LEFT_STACK_Y+0.5), Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1), -(LEFT_STACK_Y+0.5), Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
                 // lift cone off of stack
@@ -813,7 +814,7 @@ public final class AutonomousTrajectories {
 
                 .build();
 
-        finalPose = new Pose2d(-(LEFT_B2_X), -(LEFT_B2_Y), Math.toRadians(135.00));
+        finalPose = new Pose2d(-(LEFT_B2_X), -(LEFT_B2_Y+4), Math.toRadians(135.00));
 
         return trajSeq;
     }
@@ -866,7 +867,7 @@ public final class AutonomousTrajectories {
                 // lower lift to stack height
                 // reposition wrist to BACK
 
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X + 0.5, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -895,7 +896,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for new cone
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+0.5, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1, -(RIGHT_STACK_Y - 0.5), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -924,7 +925,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for cone 3
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1, -(RIGHT_STACK_Y), Math.toRadians(180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(RIGHT_STACK_X+1.5, -(RIGHT_STACK_Y - 0.5), Math.toRadians(180)), Math.toRadians(0))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -993,7 +994,7 @@ public final class AutonomousTrajectories {
                 .setTangent(90)
                 .splineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(0)), Math.toRadians(180))
 
-                .splineToSplineHeading(new Pose2d(-LEFT_STACK_X, -(LEFT_STACK_Y), Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X), -(LEFT_STACK_Y), Math.toRadians(0)), Math.toRadians(180))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -1005,7 +1006,7 @@ public final class AutonomousTrajectories {
                 // lift to MEDIUM
                 .addTemporalMarker(() -> run_Lift(MEDIUM, lift, liftRear))
                 // drive to B2
-                .splineTo(new Vector2d(-(LEFT_B2_X), -(LEFT_B2_Y)), Math.toRadians(-45.00))
+                .splineTo(new Vector2d(-(LEFT_B2_X + 1), -(LEFT_B2_Y + 1)), Math.toRadians(-45.00))
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                 .waitSeconds(0.3)
@@ -1022,7 +1023,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for new cone
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1), -(LEFT_STACK_Y - 2), Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1), -(LEFT_STACK_Y - 1), Math.toRadians(0)), Math.toRadians(180))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -1034,7 +1035,7 @@ public final class AutonomousTrajectories {
                 // lift to MEDIUM
                 .addTemporalMarker(() -> run_Lift(MEDIUM, lift, liftRear))
                 // drive to B2
-                .splineTo(new Vector2d(-(LEFT_B2_X), -(LEFT_B2_Y)), Math.toRadians(-45.00))
+                .splineTo(new Vector2d(-(LEFT_B2_X + 1), -(LEFT_B2_Y + 1)), Math.toRadians(-45.00))
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                 .waitSeconds(0.3)
@@ -1051,7 +1052,7 @@ public final class AutonomousTrajectories {
                 //
                 // return to stack for cone 3
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1), -(LEFT_STACK_Y - 2), Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-(LEFT_STACK_X+1), -(LEFT_STACK_Y - 75), Math.toRadians(0)), Math.toRadians(180))
                 .setReversed(false)
                 .addTemporalMarker(() -> intake.moveAbsolute(CLOSED))
                 .waitSeconds(0.3)
@@ -1063,7 +1064,7 @@ public final class AutonomousTrajectories {
                 // lift to MEDIUM
                 .addTemporalMarker(() -> run_Lift(MEDIUM, lift, liftRear))
                 // drive to B2
-                .splineTo(new Vector2d(-(LEFT_B2_X), -(LEFT_B2_Y)), Math.toRadians(-45.00))
+                .splineTo(new Vector2d(-(LEFT_B2_X + 1), -(LEFT_B2_Y + 1)), Math.toRadians(-45.00))
                 // open intake and back up
                 .addTemporalMarker(() -> intake.moveAbsolute(OPEN)) // theoretical +10 points
                 .waitSeconds(0.3)
@@ -1084,7 +1085,7 @@ public final class AutonomousTrajectories {
         TrajectorySequence trajSeq;
         if (reversed) {
             trajSeq = drive.trajectorySequenceBuilder(finalPose)
-                    .back(2.5)
+                    .back(2)
                     // drive to correct zone
                     .setReversed(true)
                     .splineToLinearHeading(new Pose2d(-(36 + parkZone), -13, Math.toRadians(90)), Math.toRadians(0))
@@ -1096,7 +1097,7 @@ public final class AutonomousTrajectories {
                     .build();
         } else {
             trajSeq = drive.trajectorySequenceBuilder(finalPose)
-                    .forward(2.5)
+                    .forward(2)
                     // drive to correct zone
                     .splineToLinearHeading(new Pose2d(-(36 + parkZone), -13, Math.toRadians(90)), Math.toRadians(0))
 
@@ -1118,7 +1119,7 @@ public final class AutonomousTrajectories {
         TrajectorySequence trajSeq;
         if (reversed) {
             trajSeq = drive.trajectorySequenceBuilder(finalPose)
-                    .back(2.5)
+                    .back(2)
                     // drive to correct zone
                     .setReversed(true)
                     .splineToLinearHeading(new Pose2d((36 - parkZone), -12, Math.toRadians(90)), Math.toRadians(0))
@@ -1131,7 +1132,7 @@ public final class AutonomousTrajectories {
         } else {
             trajSeq = drive.trajectorySequenceBuilder(finalPose)
 
-                    .forward(2.5)
+                    .forward(2)
                     // drive to correct zone
                     .splineToLinearHeading(new Pose2d((36 - parkZone), -12, Math.toRadians(90)), Math.toRadians(0))
 
